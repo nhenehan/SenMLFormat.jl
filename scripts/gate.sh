@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+# Everything a commit must pass.
+#
+#   scripts/gate.sh           pins, fixtures, then the tests (with Aqua and JET)
+#                             on the oldest supported Julia and the current one
+#   scripts/gate.sh --quick   tests on the current Julia only
+#
+# Env: SENML_JULIA_OLDEST   juliaup channel of the oldest Julia (default 1.11;
+#                           it must be a 1.11.x)
+#      SENML_JULIA_CURRENT  juliaup channel of the current Julia (default 1.12)
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+OLDEST="${SENML_JULIA_OLDEST:-1.11}"
+CURRENT="${SENML_JULIA_CURRENT:-1.12}"
+
+QUICK=0
+case "${1:-}" in
+    --quick) QUICK=1 ;;
+    "") ;;
+    *) echo "unknown argument: $1" >&2; exit 2 ;;
+esac
+
+step() { echo; echo "== $*"; }
+
+run_tests() { # channel
+    # Manifests are not committed; each Julia resolves its own (JET's version
+    # follows the Julia release).
+    rm -f Manifest.toml test/Manifest.toml
+    julia +"$1" --startup-file=no --project=. -e 'using Pkg; Pkg.test()'
+}
+
+if [[ $QUICK -eq 0 ]]; then
+    step "third-party pins"
+    scripts/fetch-third-party.sh --check
+    step "fixtures"
+    scripts/sync-fixtures.sh --check
+
+    oldest_version="$(julia +"$OLDEST" --startup-file=no -e 'print(VERSION)')"
+    [[ "$oldest_version" == 1.11.* ]] || {
+        echo "juliaup channel '$OLDEST' is Julia $oldest_version, not 1.11.x (set SENML_JULIA_OLDEST)" >&2
+        exit 1
+    }
+    step "tests on Julia $oldest_version ($OLDEST)"
+    run_tests "$OLDEST"
+fi
+
+step "tests on Julia $(julia +"$CURRENT" --startup-file=no -e 'print(VERSION)') ($CURRENT)"
+run_tests "$CURRENT"
+
+echo
+echo "gate passed"

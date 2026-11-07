@@ -1,0 +1,7 @@
+name = "SenML"
+uuid = "f86ae54c-015b-4025-bb5e-8bcb5d80e55a"
+version = "0.1.0-DEV"
+authors = ["Nathan Henehan <nhenehan@acm.org>"]
+
+[compat]
+julia = "1.11"
