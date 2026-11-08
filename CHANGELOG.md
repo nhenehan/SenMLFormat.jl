@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- **Facade**: `SenML.decode(media, input)`, `SenML.encode(media, pack)` and
+  `SenML.encode_unchecked(media, pack)` for all eight media types (not exported).
+  Every test case in every media type equals rsenml's bytes. README with one
+  example per format, `doc/design.md`, `doc/conformance.md` (rsenml's row
+  numbers), a PrecompileTools workload, and `examples/basics` (run by the gate).
 - **EXI** (`SenML.Exi`, RFC 8428 section 8) on JExi 0.2 (`[sources]`, tag
   `v0.2.0`): `decode` (with `out_of_band` for streams without options),
   `decode_unchecked`, `encode` and `encode_unchecked` (`alignment`, `cookie`,

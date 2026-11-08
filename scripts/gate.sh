@@ -3,7 +3,7 @@
 #
 #   scripts/gate.sh           pins, fixtures, generated EXI tables, then the tests
 #                             (with Aqua and JET) on the oldest supported Julia
-#                             and the current one
+#                             and the current one, then examples/basics
 #   scripts/gate.sh --quick   tests on the current Julia only
 #
 # Env: SENML_JULIA_OLDEST   juliaup channel of the oldest Julia (default 1.11;
@@ -51,6 +51,13 @@ fi
 
 step "tests on Julia $(julia +"$CURRENT" --startup-file=no -e 'print(VERSION)') ($CURRENT)"
 run_tests "$CURRENT"
+
+if [[ $QUICK -eq 0 ]]; then
+    step "example"
+    rm -f examples/basics/Manifest.toml
+    julia +"$CURRENT" --startup-file=no --project=examples/basics -e 'using Pkg; Pkg.instantiate()' >/dev/null
+    julia +"$CURRENT" --startup-file=no --project=examples/basics examples/basics/basics.jl >/dev/null
+fi
 
 echo
 echo "gate passed"
