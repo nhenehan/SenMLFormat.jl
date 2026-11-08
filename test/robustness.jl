@@ -41,16 +41,18 @@ function decode_everything(input::Vector{UInt8})
             e isa SenMLError || return (e, f)
         end
     end
-    d = SenML.Json.StreamDecoder()
-    try
-        for i in 1:7:length(input)
-            push!(d, input[i:min(i + 6, end)])
-            while SenML.Json.next_record!(d) !== nothing
+    for M in (SenML.Json, SenML.Cbor)
+        d = M.StreamDecoder()
+        try
+            for i in 1:7:length(input)
+                push!(d, input[i:min(i + 6, end)])
+                while M.next_record!(d) !== nothing
+                end
             end
+            M.finish(d)
+        catch e
+            e isa SenMLError || return (e, "$M.StreamDecoder")
         end
-        SenML.Json.finish(d)
-    catch e
-        e isa SenMLError || return (e, "Json.StreamDecoder")
     end
     return nothing
 end

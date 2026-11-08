@@ -12,10 +12,14 @@ end
 
 const DECODERS = Dict{String,Function}(
     "json" => SenML.Json.decode,
+    "cbor" => SenML.Cbor.decode,
+    "cbor-sensml" => SenML.Cbor.decode_sensml,
 )
 
 const ENCODERS = Dict{String,Function}(
     "json" => SenML.Json.encode,
+    "cbor" => SenML.Cbor.encode,
+    "cbor_sensml" => SenML.Cbor.encode_sensml,
 )
 
 @testset "shared vectors" begin
@@ -33,6 +37,7 @@ const ENCODERS = Dict{String,Function}(
         want = SenML.Json.decode_unchecked(v["expected"])
         @test (v["id"], length(pack) == length(want) && all(same_fields.(pack, want))) == (v["id"], true)
         for (fmt, enc) in ENCODERS
+            haskey(v, fmt) || continue  # vectors carry no SenSML CBOR column
             @test (v["id"], fmt, enc(pack)) == (v["id"], fmt, unhex(v[fmt]))
         end
     end

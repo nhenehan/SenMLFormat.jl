@@ -54,5 +54,6 @@ include("core/base64url.jl")
 include("core/number.jl")
 
 include("json.jl")
+include("cbor.jl")
 
 end # module
