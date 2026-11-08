@@ -53,4 +53,6 @@ include("core/media.jl")
 include("core/base64url.jl")
 include("core/number.jl")
 
+include("json.jl")
+
 end # module

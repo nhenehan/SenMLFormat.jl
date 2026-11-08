@@ -1,14 +1,5 @@
 # The data model: rsenml-core's unit tests, ported.
 
-errkind(f) =
-    try
-        f()
-        :ok
-    catch e
-        e isa SenMLError || rethrow()
-        e.kind
-    end
-
 @testset "core" begin
     @testset "labels" begin
         for l in 1:15
