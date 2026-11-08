@@ -33,8 +33,11 @@ function mutate(rng::Rng, input::Vector{UInt8})
     return out
 end
 
+const ALL_DECODERS = Function[SenML.Json.decode, SenML.Cbor.decode, SenML.Cbor.decode_sensml,
+    SenML.Xml.decode]
+
 function decode_everything(input::Vector{UInt8})
-    for f in values(DECODERS)
+    for f in ALL_DECODERS
         try
             f(input)
         catch e

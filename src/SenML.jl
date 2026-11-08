@@ -13,7 +13,8 @@ the Rust library rsenml: same rules, same bytes.
 - [`lookup_unit`](@ref), [`UNITS`](@ref): the units registry (section 12.1).
 - [`RecordSelector`](@ref): `rec=` fragment identifiers (section 9).
 - [`MediaType`](@ref): media types and CoAP Content-Formats (sections 12.3, 12.5).
-- `SenML.Json`, `SenML.Cbor`: the JSON (section 5) and CBOR (section 6) formats.
+- `SenML.Json`, `SenML.Cbor`, `SenML.Xml`: the JSON (section 5), CBOR (section 6)
+  and XML (section 7) formats.
 """
 module SenML
 
@@ -55,5 +56,6 @@ include("core/number.jl")
 
 include("json.jl")
 include("cbor.jl")
+include("xml.jl")
 
 end # module

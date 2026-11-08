@@ -61,11 +61,19 @@
         @test resolve(cbor; now = 1e9) == resolve(example("5.1.2b"); now = 1e9)
     end
 
+    @testset "section 7 XML is 5.1.2" begin
+        @test SenML.Xml.decode(xml_examples("7")[1]) == example("5.1.2b")
+        # The section 8 XML examples: the first holds 5.1.2's first example.
+        @test SenML.Xml.decode(xml_examples("8")[1]) == example("5.1.2a")
+        @test length(SenML.Xml.decode(xml_examples("8")[2])) == 1
+    end
+
     @testset "table 3 sizes" begin
         pack = example("5.1.3")
         # No whitespace and the smallest numbers: smaller than the RFC's 573 and 254.
         @test length(SenML.Json.encode(pack)) < 573
         @test length(SenML.Cbor.encode(pack)) <= 254
+        @test length(SenML.Xml.encode(pack)) < 649
     end
 
     @testset "5.1.7 actuation times" begin

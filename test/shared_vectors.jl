@@ -20,6 +20,7 @@ const ENCODERS = Dict{String,Function}(
     "json" => SenML.Json.encode,
     "cbor" => SenML.Cbor.encode,
     "cbor_sensml" => SenML.Cbor.encode_sensml,
+    "xml" => SenML.Xml.encode,
 )
 
 @testset "shared vectors" begin
@@ -48,5 +49,8 @@ const ENCODERS = Dict{String,Function}(
         for (fmt, enc) in ENCODERS
             @test (c["name"], fmt, enc(pack)) == (c["name"], fmt, unhex(c[fmt]))
         end
+        # Every format reads back the same pack (EXI drops -0.0's sign).
+        @test same_pack(SenML.Xml.decode(unhex(c["xml"])), pack)
+        @test read(joinpath(FIXTURES, "exificient", c["name"] * ".xml")) == unhex(c["xml"])
     end
 end

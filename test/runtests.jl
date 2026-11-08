@@ -8,6 +8,7 @@ using Test
     include("core.jl")
     include("json.jl")
     include("cbor.jl")
+    include("xml.jl")
     include("rfc_examples.jl")
     include("shared_vectors.jl")
     include("robustness.jl")

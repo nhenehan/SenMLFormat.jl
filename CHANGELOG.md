@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- **XML** (`SenML.Xml`, RFC 8428 section 7): `decode`, `decode_unchecked`,
+  `encode`, `encode_unchecked`, `RecordReader`, `StreamEncoder`. Its own
+  tokenizer with xmlparser's rules (names, characters, comments, CDATA, the
+  declaration); UTF-8 only, DTDs refused; namespaces, references and
+  attribute-value normalization; the XSD types of Table 5. Output equals rsenml's
+  bytes for every test case. No XML.jl dependency.
 - **CBOR** (`SenML.Cbor`, RFC 8428 section 6): `decode`, `decode_unchecked`,
   `decode_sensml`, `encode`, `encode_unchecked`, `encode_sensml`, `RecordReader`,
   SenSML `StreamDecoder` and `StreamEncoder`. Integers, half/single/double floats
