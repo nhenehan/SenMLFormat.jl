@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- **EXI** (`SenML.Exi`, RFC 8428 section 8) on JExi 0.2 (`[sources]`, tag
+  `v0.2.0`): `decode` (with `out_of_band` for streams without options),
+  `decode_unchecked`, `encode` and `encode_unchecked` (`alignment`, `cookie`,
+  `extensions`), `RecordReader`, `StreamEncoder`. Grammar tables generated from
+  `spec/senml.xsd` with schemaId "a" (`scripts/gen-tables.sh`, checked by the
+  gate). Both section 8 dumps both ways; all 32 EXIficient streams byte for
+  byte; -0.0 is written as 0.
 - **XML** (`SenML.Xml`, RFC 8428 section 7): `decode`, `decode_unchecked`,
   `encode`, `encode_unchecked`, `RecordReader`, `StreamEncoder`. Its own
   tokenizer with xmlparser's rules (names, characters, comments, CDATA, the

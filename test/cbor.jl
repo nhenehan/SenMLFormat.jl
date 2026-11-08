@@ -166,6 +166,15 @@ end
         @test SenML.Json.encode(C.decode(C.encode(pack))) == unhex(c["json"])
         @test C.encode_unchecked(pack) == C.encode(pack)
     end
+    # JSON -> CBOR -> XML -> EXI -> JSON gives the same JSON bytes.
+    for c in cases()
+        json = SenML.Json.encode(exi_view(SenML.Json.decode(unhex(c["json"]))))
+        a = SenML.Json.decode(json)
+        b = C.decode(C.encode(a))
+        x = SenML.Xml.decode(SenML.Xml.encode(b))
+        d = SenML.Exi.decode(SenML.Exi.encode(x))
+        @test SenML.Json.encode(d) == json
+    end
     # Negative zero survives JSON and CBOR.
     p = Pack([Record(n = "a", v = -0.0)])
     @test same_pack(SenML.Json.decode(SenML.Json.encode(p)), p)

@@ -136,6 +136,18 @@ function same_pack(a, b)
     return true
 end
 
+"""
+The pack as EXI can carry it: EXI floats have no negative zero (an EXI Float's
+mantissa is an EXI Integer, and EXI 7.1.5 codes a negative integer as its
+magnitude minus one), so -0.0 comes back as 0.0.
+"""
+function exi_view(pack)
+    z(x::Float64) = x == 0 ? 0.0 : x
+    z(x) = x
+    return Pack([Record(r.bn, z(r.bt), r.bu, z(r.bv), z(r.bs), r.bver, r.n, r.u, z(r.value), z(r.s),
+        z(r.t), z(r.ut), r.extensions) for r in pack])
+end
+
 "The kind of SenMLError `f()` throws, or :ok."
 function errkind(f)
     try

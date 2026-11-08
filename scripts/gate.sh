@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # Everything a commit must pass.
 #
-#   scripts/gate.sh           pins, fixtures, then the tests (with Aqua and JET)
-#                             on the oldest supported Julia and the current one
+#   scripts/gate.sh           pins, fixtures, generated EXI tables, then the tests
+#                             (with Aqua and JET) on the oldest supported Julia
+#                             and the current one
 #   scripts/gate.sh --quick   tests on the current Julia only
 #
 # Env: SENML_JULIA_OLDEST   juliaup channel of the oldest Julia (default 1.11;
@@ -36,6 +37,8 @@ if [[ $QUICK -eq 0 ]]; then
     scripts/fetch-third-party.sh --check
     step "fixtures"
     scripts/sync-fixtures.sh --check
+    step "generated EXI tables"
+    scripts/gen-tables.sh --check
 
     oldest_version="$(julia +"$OLDEST" --startup-file=no -e 'print(VERSION)')"
     [[ "$oldest_version" == 1.11.* ]] || {

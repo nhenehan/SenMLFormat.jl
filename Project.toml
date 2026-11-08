@@ -3,5 +3,12 @@ uuid = "f86ae54c-015b-4025-bb5e-8bcb5d80e55a"
 version = "0.1.0-DEV"
 authors = ["Nathan Henehan <nhenehan@acm.org>"]
 
+[deps]
+JExi = "6c138e09-6d40-4d74-9105-bc5e8df82c36"
+
 [compat]
+JExi = "0.2"
 julia = "1.11"
+
+[sources]
+JExi = {url = "https://github.com/nhenehan/jexi", rev = "v0.2.0"}

@@ -21,6 +21,8 @@ const ENCODERS = Dict{String,Function}(
     "cbor" => SenML.Cbor.encode,
     "cbor_sensml" => SenML.Cbor.encode_sensml,
     "xml" => SenML.Xml.encode,
+    "exi_bp" => p -> SenML.Exi.encode(p),
+    "exi_ba" => p -> SenML.Exi.encode(p; alignment = :byte_aligned),
 )
 
 @testset "shared vectors" begin
@@ -51,6 +53,8 @@ const ENCODERS = Dict{String,Function}(
         end
         # Every format reads back the same pack (EXI drops -0.0's sign).
         @test same_pack(SenML.Xml.decode(unhex(c["xml"])), pack)
+        @test same_pack(SenML.Exi.decode(unhex(c["exi_bp"])), exi_view(pack))
+        @test same_pack(SenML.Exi.decode(unhex(c["exi_ba"])), exi_view(pack))
         @test read(joinpath(FIXTURES, "exificient", c["name"] * ".xml")) == unhex(c["xml"])
     end
 end

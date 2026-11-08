@@ -68,12 +68,25 @@
         @test length(SenML.Xml.decode(xml_examples("8")[2])) == 1
     end
 
+    @testset "section 8 EXI dumps are its XML examples" begin
+        xml = xml_examples("8")
+        dumps = hex_dumps("8")
+        bp = SenML.Xml.decode(xml[1])
+        ba = SenML.Xml.decode(xml[2])
+        @test SenML.Exi.decode(dumps[1]) == bp
+        @test SenML.Exi.decode(dumps[2]) == ba
+        @test SenML.Exi.encode(bp) == dumps[1]
+        @test SenML.Exi.encode(ba; alignment = :byte_aligned) == dumps[2]
+    end
+
     @testset "table 3 sizes" begin
         pack = example("5.1.3")
         # No whitespace and the smallest numbers: smaller than the RFC's 573 and 254.
         @test length(SenML.Json.encode(pack)) < 573
         @test length(SenML.Cbor.encode(pack)) <= 254
         @test length(SenML.Xml.encode(pack)) < 649
+        # EXI: 161 bytes, as in the RFC.
+        @test length(SenML.Exi.encode(pack)) == 161
     end
 
     @testset "5.1.7 actuation times" begin

@@ -34,7 +34,7 @@ function mutate(rng::Rng, input::Vector{UInt8})
 end
 
 const ALL_DECODERS = Function[SenML.Json.decode, SenML.Cbor.decode, SenML.Cbor.decode_sensml,
-    SenML.Xml.decode]
+    SenML.Xml.decode, SenML.Exi.decode, x -> SenML.Exi.decode(x; out_of_band = :byte_aligned)]
 
 function decode_everything(input::Vector{UInt8})
     for f in ALL_DECODERS
