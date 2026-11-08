@@ -108,7 +108,8 @@ Pkg.add(url = "https://github.com/nhenehan/senml.jl")
 Where the RFC is unclear, SenML.jl makes rsenml's choices; they and the
 Julia-specific points are in [doc/design.md](doc/design.md). One known limit: EXI
 cannot carry -0.0. The requirement-by-requirement checklist is
-[doc/conformance.md](doc/conformance.md). Speed next to rsenml is in
+[doc/conformance.md](doc/conformance.md). How it compares with rsenml, features and
+speed, is in [doc/comparison.md](doc/comparison.md) and
 [doc/performance.md](doc/performance.md).
 
 ## Examples
@@ -122,7 +123,7 @@ cannot carry -0.0. The requirement-by-requirement checklist is
 scripts/fetch-third-party.sh   # the pinned rsenml, in a cache outside this tree
 scripts/sync-fixtures.sh       # copy its test data into test/fixtures and spec/
 scripts/gate.sh                # everything a commit must pass (--quick: one Julia)
-bench/run.sh                   # speed next to rsenml, writes doc/performance.md
+bench/run.sh                   # speed next to rsenml (needs cargo), writes doc/performance.md
 ```
 
 | Script | Purpose |

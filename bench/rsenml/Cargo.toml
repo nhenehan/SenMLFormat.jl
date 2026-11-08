@@ -1,0 +1,16 @@
+# rsenml timed the way rsenml's compare times it (compare/src/perf.rs), on the
+# data in ../data. Run by ../run.sh; prints TSV.
+[workspace]
+
+[package]
+name = "senml-jl-bench-rsenml"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+[dependencies]
+rsenml = { git = "https://github.com/nhenehan/rsenml", tag = "v0.9.1" }
+
+[profile.release]
+lto = true
+codegen-units = 1

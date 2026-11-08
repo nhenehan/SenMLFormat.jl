@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- **Measured next to rsenml**: `bench/` times SenML.jl and rsenml v0.9.1 the
+  same way on rsenml compare's datasets (`bench/run.sh` writes
+  `doc/performance.md`); `doc/comparison.md` compares features. Sizes are equal
+  in every format.
 - **Facade**: `SenML.decode(media, input)`, `SenML.encode(media, pack)` and
   `SenML.encode_unchecked(media, pack)` for all eight media types (not exported).
   Every test case in every media type equals rsenml's bytes. README with one
