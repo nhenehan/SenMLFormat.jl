@@ -149,13 +149,20 @@ measurement itself (see the first record of the example in
 """
 is_base_only(r::Record) = !has_regular_fields(r)
 
+nonfinite(x) = x isa Float64 && !isfinite(x)
+
 # The label of the first number in the record that is infinite or NaN, or
 # `nothing`. Same order as rsenml's `Record::numbers`.
+# (Each field is checked on its own, not in a loop over a tuple, which would box
+# every field.)
 function first_nonfinite(r::Record)::Union{Nothing,String}
-    for (l, x) in ((L_BT, r.bt), (L_BV, r.bv), (L_BS, r.bs), (L_V, r.value), (L_S, r.s),
-                   (L_T, r.t), (L_UT, r.ut))
-        x isa Float64 && !isfinite(x) && return label_text(l)
-    end
+    nonfinite(r.bt) && return label_text(L_BT)
+    nonfinite(r.bv) && return label_text(L_BV)
+    nonfinite(r.bs) && return label_text(L_BS)
+    nonfinite(r.value) && return label_text(L_V)
+    nonfinite(r.s) && return label_text(L_S)
+    nonfinite(r.t) && return label_text(L_T)
+    nonfinite(r.ut) && return label_text(L_UT)
     for e in r.extensions
         e.value isa Float64 && !isfinite(e.value) && return e.label
     end

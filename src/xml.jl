@@ -945,6 +945,11 @@ function write_number_attribute(io::IO, label::AbstractString, v::Float64, index
     return nothing
 end
 
+# A string or number attribute, when present.
+write_field(::IO, ::String, ::Nothing, ::Int) = nothing
+write_field(io::IO, label::String, x::String, ::Int) = write_attribute(io, label, x)
+write_field(io::IO, label::String, x::Float64, index::Int) = write_number_attribute(io, label, x, index)
+
 function write_value(io::IO, label::AbstractString, v::Value, index::Int)
     if v isa Float64
         write_number_attribute(io, label, v, index)
@@ -970,10 +975,13 @@ Writes one `<senml .../>` element (for writing a document one piece at a time; s
 function encode_record(io::IO, r::Record, index::Integer = 1)
     index = Int(index)
     write(io, "<senml")
-    for (label, x) in (("bn", r.bn), ("bt", r.bt), ("bu", r.bu), ("bv", r.bv), ("bs", r.bs))
-        x === nothing && continue
-        x isa String ? write_attribute(io, label, x) : write_number_attribute(io, label, x, index)
-    end
+    # One call per field, not a loop over a tuple: the fields have different
+    # types, and a loop over them would box each one.
+    write_field(io, "bn", r.bn, index)
+    write_field(io, "bt", r.bt, index)
+    write_field(io, "bu", r.bu, index)
+    write_field(io, "bv", r.bv, index)
+    write_field(io, "bs", r.bs, index)
     if r.bver !== nothing
         # `bver` is an xs:int (https://www.w3.org/TR/xmlschema-2/#int).
         r.bver > 2_147_483_647 && throw(unrepresentable("bver above the xs:int range"))
@@ -981,10 +989,11 @@ function encode_record(io::IO, r::Record, index::Integer = 1)
         print(io, r.bver)
         write(io, UInt8('"'))
     end
-    for (label, x) in (("n", r.n), ("u", r.u), ("t", r.t), ("ut", r.ut), ("s", r.s))
-        x === nothing && continue
-        x isa String ? write_attribute(io, label, x) : write_number_attribute(io, label, x, index)
-    end
+    write_field(io, "n", r.n, index)
+    write_field(io, "u", r.u, index)
+    write_field(io, "t", r.t, index)
+    write_field(io, "ut", r.ut, index)
+    write_field(io, "s", r.s, index)
     v = r.value
     v === nothing || write_value(io, label_text(value_label(v)), v, index)
     for e in r.extensions

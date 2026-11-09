@@ -321,31 +321,21 @@ function number_of(r::Record, l::Int)::Union{Nothing,Float64}
     return nothing
 end
 
-# The EXI value of a label, or nothing when the record lacks it.
-function exi_value(r::Record, l::Int, data::Union{Nothing,String})
-    l == L_BN && return r.bn
-    l == L_BU && return r.bu
-    l == L_N && return r.n
-    l == L_U && return r.u
-    l == L_VS && return r.value isa String ? r.value : nothing
-    l == L_VB && return r.value isa Bool ? r.value : nothing
-    l == L_VD && return data
-    if l == L_BVER
-        r.bver === nothing && return nothing
-        # xs:int (https://www.w3.org/TR/xmlschema-2/#int)
-        r.bver > 2_147_483_647 &&
-            throw(SenMLError(:Unrepresentable; format = :exi, reason = "bver above the xs:int range"))
-        return Int64(r.bver)
-    end
-    v = number_of(r, l)
-    v === nothing && return nothing
-    # Doubles go to JExi as EXI Floats (a decimal mantissa and exponent): the
-    # shortest decimal digits, with trailing zeros moved into the exponent. That is
-    # how EXIficient puts the same XML attribute text into standard form, so the
-    # bytes are the same as for the text form.
-    # https://www.w3.org/TR/exi/#encodingFloat
-    m, e = decimal_parts(v)
-    return J.ExiFloat(m, Int16(e))
+# One attribute, when the record has it. (Each attribute is written from its own
+# field, not from a loop over a tuple of mixed types, which would box every value.)
+put!(::J.Encoder, _, ::Nothing) = nothing
+put!(e::J.Encoder, q, x::String) = J.attribute!(e, q, x)
+
+# Doubles go to JExi as EXI Floats (a decimal mantissa and exponent): the shortest
+# decimal digits, with trailing zeros moved into the exponent. That is how
+# EXIficient puts the same XML attribute text into standard form, so the bytes
+# are the same as for the text form.
+# https://www.w3.org/TR/exi/#encodingFloat
+put_number!(::J.Encoder, _, ::Nothing) = nothing
+function put_number!(e::J.Encoder, q, v::Float64)
+    m, x = decimal_parts(v)
+    J.attribute!(e, q, J.ExiFloat(m, Int16(x)))
+    return nothing
 end
 
 """
@@ -365,13 +355,31 @@ function record!(s::StreamEncoder, r::Record)
         v = number_of(r, l)
         v === nothing || isfinite(v) || throw(record_error(:NonFinite, index, label_text(l)))
     end
+    # `bver` is an xs:int (https://www.w3.org/TR/xmlschema-2/#int).
+    if r.bver !== nothing && r.bver > 2_147_483_647
+        throw(SenMLError(:Unrepresentable; format = :exi, reason = "bver above the xs:int range"))
+    end
     data = r.value isa Vector{UInt8} ? base64url_encode(r.value) : nothing
-    values = Tuple((q, exi_value(r, l, data)) for (l, q) in ATTRIBUTE_ORDER)
     checked(s) do e
+        # Attributes in the schema's order (alphabetical, ATTRIBUTE_ORDER).
         J.start_element!(e, Tables.LN_SENML)
-        for (q, v) in values
-            v === nothing || J.attribute!(e, q, v)
-        end
+        put!(e, Tables.LN_BN, r.bn)
+        put_number!(e, Tables.LN_BS, r.bs)
+        put_number!(e, Tables.LN_BT, r.bt)
+        put!(e, Tables.LN_BU, r.bu)
+        put_number!(e, Tables.LN_BV, r.bv)
+        bver = r.bver
+        bver === nothing || J.attribute!(e, Tables.LN_BVER, Int64(bver))
+        put!(e, Tables.LN_N, r.n)
+        put_number!(e, Tables.LN_S, r.s)
+        put_number!(e, Tables.LN_T, r.t)
+        put!(e, Tables.LN_U, r.u)
+        put_number!(e, Tables.LN_UT, r.ut)
+        v = r.value
+        v isa Float64 && put_number!(e, Tables.LN_V, v)
+        v isa Bool && J.attribute!(e, Tables.LN_VB, v)
+        data === nothing || J.attribute!(e, Tables.LN_VD, data)
+        v isa String && J.attribute!(e, Tables.LN_VS, v)
         J.end_element!(e)
     end
     return nothing

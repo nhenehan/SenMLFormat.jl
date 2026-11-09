@@ -36,7 +36,8 @@ using ..SenML: SenML, Record, Pack, Extension, Value, SenMLError, Validator, che
     validate, syntax_error, incomplete, record_error, RecordBuilder, set!, extension!,
     skipped_extension, build, label_from_text, label_from_cbor, label_type, label_text,
     value_label, LABEL_CBOR, T_STRING, T_NUMBER, T_VERSION, T_BOOL, T_DATA,
-    decimal_to_float, as_exact_int, to_float16_exact, to_float32_exact
+    decimal_to_float, as_exact_int, to_float16_exact, to_float32_exact, L_BN, L_BT, L_BU,
+    L_BV, L_BS, L_N, L_U, L_T, L_UT, L_S
 import ..SenML: finish
 
 #------------------------------------------------------------- reading CBOR items
@@ -645,6 +646,19 @@ function write_number(io::IO, v::Float64, label::AbstractString, index::Int)
     return nothing
 end
 
+# A string or number field, when present: its integer key, then its value.
+write_field(::IO, ::Int, ::Nothing, ::Int) = nothing
+function write_field(io::IO, l::Int, x::String, ::Int)
+    write_int(io, Int64(LABEL_CBOR[l]))
+    write_text(io, x)
+    return nothing
+end
+function write_field(io::IO, l::Int, x::Float64, index::Int)
+    write_int(io, Int64(LABEL_CBOR[l]))
+    write_number(io, x, label_text(l), index)
+    return nothing
+end
+
 function write_value(io::IO, v::Value, label::AbstractString, index::Int)
     if v isa Float64
         write_number(io, v, label, index)
@@ -674,20 +688,22 @@ error reports.
 function encode_record(io::IO, r::Record, index::Integer = 1)
     index = Int(index)
     write_head(io, 5, UInt64(field_count(r)))
-    for (l, x) in ((1, r.bn), (2, r.bt), (3, r.bu), (4, r.bv), (5, r.bs))
-        x === nothing && continue
-        write_int(io, Int64(LABEL_CBOR[l]))
-        x isa String ? write_text(io, x) : write_number(io, x, label_text(l), index)
-    end
+    # One call per field, not a loop over a tuple: the fields have different
+    # types, and a loop over them would box each one.
+    write_field(io, L_BN, r.bn, index)
+    write_field(io, L_BT, r.bt, index)
+    write_field(io, L_BU, r.bu, index)
+    write_field(io, L_BV, r.bv, index)
+    write_field(io, L_BS, r.bs, index)
     if r.bver !== nothing
         write_int(io, Int64(-1))
         write_head(io, 0, r.bver)
     end
-    for (l, x) in ((7, r.n), (8, r.u), (9, r.t), (10, r.ut), (11, r.s))
-        x === nothing && continue
-        write_int(io, Int64(LABEL_CBOR[l]))
-        x isa String ? write_text(io, x) : write_number(io, x, label_text(l), index)
-    end
+    write_field(io, L_N, r.n, index)
+    write_field(io, L_U, r.u, index)
+    write_field(io, L_T, r.t, index)
+    write_field(io, L_UT, r.ut, index)
+    write_field(io, L_S, r.s, index)
     v = r.value
     if v !== nothing
         l = value_label(v)

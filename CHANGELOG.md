@@ -6,6 +6,10 @@
   same way on rsenml compare's datasets (`bench/run.sh` writes
   `doc/performance.md`); `doc/comparison.md` compares features. Sizes are equal
   in every format.
+- **Faster encoding and validation**: the writers (JSON, CBOR, XML, EXI) and the
+  finite-number check no longer loop over tuples of fields of mixed types, which
+  boxed every field. Encoding is 5-12× faster (1.7-2.5× rsenml's time, from
+  10-25×); decoding, which validates, 2× faster.
 - **Facade**: `SenML.decode(media, input)`, `SenML.encode(media, pack)` and
   `SenML.encode_unchecked(media, pack)` for all eight media types (not exported).
   Every test case in every media type equals rsenml's bytes. README with one

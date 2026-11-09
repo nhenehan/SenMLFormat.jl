@@ -760,6 +760,19 @@ function write_json_number(io::IO, v::Float64, label::AbstractString, index::Int
     return nothing
 end
 
+# A string or number field, when present. Returns the new `first`.
+write_field(::IO, first::Bool, ::String, ::Nothing, ::Int) = first
+function write_field(io::IO, first::Bool, label::String, x::String, ::Int)
+    write_member(io, first, label)
+    write_escaped(io, x)
+    return false
+end
+function write_field(io::IO, first::Bool, label::String, x::Float64, index::Int)
+    write_member(io, first, label)
+    write_json_number(io, x, label, index)
+    return false
+end
+
 function write_value(io::IO, v::Value, label::AbstractString, index::Int)
     if v isa Float64
         write_json_number(io, v, label, index)
@@ -783,20 +796,22 @@ function encode_record(io::IO, r::Record, index::Integer = 1)
     index = Int(index)
     write(io, UInt8('{'))
     first = true
-    for (label, x) in (("bn", r.bn), ("bt", r.bt), ("bu", r.bu), ("bv", r.bv), ("bs", r.bs))
-        x === nothing && continue
-        first = write_member(io, first, label)
-        x isa String ? write_escaped(io, x) : write_json_number(io, x, label, index)
-    end
+    # One call per field, not a loop over a tuple: the fields have different
+    # types, and a loop over them would box each one.
+    first = write_field(io, first, "bn", r.bn, index)
+    first = write_field(io, first, "bt", r.bt, index)
+    first = write_field(io, first, "bu", r.bu, index)
+    first = write_field(io, first, "bv", r.bv, index)
+    first = write_field(io, first, "bs", r.bs, index)
     if r.bver !== nothing
         first = write_member(io, first, "bver")
         print(io, r.bver)
     end
-    for (label, x) in (("n", r.n), ("u", r.u), ("t", r.t), ("ut", r.ut), ("s", r.s))
-        x === nothing && continue
-        first = write_member(io, first, label)
-        x isa String ? write_escaped(io, x) : write_json_number(io, x, label, index)
-    end
+    first = write_field(io, first, "n", r.n, index)
+    first = write_field(io, first, "u", r.u, index)
+    first = write_field(io, first, "t", r.t, index)
+    first = write_field(io, first, "ut", r.ut, index)
+    first = write_field(io, first, "s", r.s, index)
     v = r.value
     if v !== nothing
         label = label_text(value_label(v))

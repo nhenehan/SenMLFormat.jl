@@ -52,5 +52,5 @@ code as of this file:
 
 | Operation | SenML.jl / rsenml |
 |---|---|
-| decode (all formats) | about 4× to 7× slower |
-| encode (all formats) | about 10× to 25× slower |
+| decode (all formats) | about 2× to 4× slower |
+| encode (all formats) | about 1.7× to 2.5× slower |
