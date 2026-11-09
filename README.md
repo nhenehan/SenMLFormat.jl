@@ -121,7 +121,8 @@ speed, is in [doc/comparison.md](doc/comparison.md) and
 
 ```sh
 scripts/fetch-third-party.sh   # the pinned rsenml, in a cache outside this tree
-scripts/sync-fixtures.sh       # copy its test data into test/fixtures and spec/
+scripts/fetch-standards.sh     # download RFC 8428 (the tests read its examples)
+scripts/sync-fixtures.sh       # copy rsenml's test data into test/fixtures
 scripts/gate.sh                # everything a commit must pass (--quick: one Julia)
 bench/run.sh                   # speed next to rsenml (needs cargo), writes doc/performance.md
 ```
@@ -129,12 +130,13 @@ bench/run.sh                   # speed next to rsenml (needs cargo), writes doc/
 | Script | Purpose |
 |---|---|
 | `scripts/fetch-third-party.sh [--check \| --update NAME]` | the pinned rsenml in `~/.cache/senml.jl/third_party` |
-| `scripts/sync-fixtures.sh [--check]` | rsenml's exported vectors and cases, the EXIficient streams, the RFC text and XSD |
-| `scripts/gen-tables.sh [--check]` | EXI grammar tables of `spec/senml.xsd` (JExi's schema compiler, schemaId "a") |
+| `scripts/fetch-standards.sh [--check]` | [RFC 8428](https://www.rfc-editor.org/rfc/rfc8428) from rfc-editor.org, and its section 8 XSD taken out of it, checked by sha256 (`standards.lock`), in `~/.cache/senml.jl/standards` |
+| `scripts/sync-fixtures.sh [--check]` | rsenml's exported vectors and cases, the EXIficient streams |
+| `scripts/gen-tables.sh [--check]` | EXI grammar tables of the [RFC 8428 section 8 XSD](https://www.rfc-editor.org/rfc/rfc8428#section-8) (JExi's schema compiler, schemaId "a") |
 | `scripts/gate.sh [--quick]` | tests with Aqua and JET on Julia 1.11 and 1.12, the checks above, the example |
 | `bench/run.sh` | SenML.jl and rsenml timed the same way on the same data |
 
 ## License
 
-BSD 3-Clause, the same as rsenml. See [LICENSE](LICENSE). The RFC text in
-`spec/` keeps its own license.
+BSD 3-Clause, the same as rsenml. See [LICENSE](LICENSE). Standards are linked,
+not committed; the downloaded RFC keeps its own license.

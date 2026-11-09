@@ -35,6 +35,8 @@ run_tests() { # channel
 if [[ $QUICK -eq 0 ]]; then
     step "third-party pins"
     scripts/fetch-third-party.sh --check
+    step "standards (RFC text, fetched, not committed)"
+    scripts/fetch-standards.sh --check
     step "fixtures"
     scripts/sync-fixtures.sh --check
     step "generated EXI tables"

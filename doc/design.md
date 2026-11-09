@@ -78,7 +78,9 @@ the same double; CBOR numbers take the smallest exact form.
 - **EXI through JExi.** JExi 0.2 is a hard dependency, through `[sources]` at tag
   `v0.2.0` (JExi is not in the General registry, and `[sources]` needs Julia 1.11,
   hence the 1.11 floor). The grammar tables are made by JExi's schema compiler from
-  `spec/senml.xsd` with schemaId "a" (`scripts/gen-tables.sh`) and committed.
+  the [RFC 8428 section 8 XSD](https://www.rfc-editor.org/rfc/rfc8428#section-8) with schemaId "a" (`scripts/gen-tables.sh`) and committed. The
+  RFC is not committed: `scripts/fetch-standards.sh` downloads it and takes the
+  schema out of it.
   JExi errors become `SenMLError`s.
 - **Not ported:** `encode_into` (rsenml's fixed-buffer writers, for `no_std`).
   In Julia, `encode` returns a new `Vector{UInt8}`, and the per-record writers

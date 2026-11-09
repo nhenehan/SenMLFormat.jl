@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- **Standards are linked, not committed**: `spec/` is gone.
+  `scripts/fetch-standards.sh` downloads RFC 8428 from rfc-editor.org into
+  `~/.cache/senml.jl/standards` and takes the section 8 XSD out of it, both
+  checked by sha256 against `standards.lock`; the tests and `gen-tables.sh` read
+  them there, and the gate checks them. `sync-fixtures.sh` no longer copies them
+  from rsenml.
 - **Measured next to rsenml**: `bench/` times SenML.jl and rsenml v0.9.1 the
   same way on rsenml compare's datasets (`bench/run.sh` writes
   `doc/performance.md`); `doc/comparison.md` compares features. Sizes are equal
@@ -19,7 +25,7 @@
   `v0.2.0`): `decode` (with `out_of_band` for streams without options),
   `decode_unchecked`, `encode` and `encode_unchecked` (`alignment`, `cookie`,
   `extensions`), `RecordReader`, `StreamEncoder`. Grammar tables generated from
-  `spec/senml.xsd` with schemaId "a" (`scripts/gen-tables.sh`, checked by the
+  the [RFC 8428 section 8 XSD](https://www.rfc-editor.org/rfc/rfc8428#section-8) with schemaId "a" (`scripts/gen-tables.sh`, checked by the
   gate). Both section 8 dumps both ways; all 32 EXIficient streams byte for
   byte; -0.0 is written as 0.
 - **XML** (`SenML.Xml`, RFC 8428 section 7): `decode`, `decode_unchecked`,

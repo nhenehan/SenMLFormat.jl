@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# Copy the test fixtures and the specs from the pinned rsenml checkout.
+# Copy the test fixtures from the pinned rsenml checkout. (The RFC text and its
+# schema are not copied: scripts/fetch-standards.sh downloads them.)
 #
 #   test/fixtures/export/      rsenml's conformance vectors and test cases, with
 #                              its verdicts and bytes in every format (rsenml's
 #                              scripts/export-fixtures.sh made them)
 #   test/fixtures/exificient/  EXIficient 1.0.7 streams of every test case,
 #                              verified against manifest.tsv
-#   spec/                      RFC 8428 text and the section 7 XML schema
 #
 #   scripts/sync-fixtures.sh           copy
 #   scripts/sync-fixtures.sh --check   exit 1 if anything differs from the pin
@@ -23,7 +23,6 @@ COPIES=(
     "test/fixtures/export:crates/rsenml-tests/fixtures/export"
     "test/fixtures/exificient:crates/rsenml-tests/fixtures/exificient"
 )
-SPECS=(rfc8428.txt senml.xsd)
 
 CHECK=0
 case "${1:-}" in
@@ -52,9 +51,6 @@ if [[ $CHECK -eq 1 ]]; then
     for c in "${COPIES[@]}"; do
         diff -r -q "$RSENML/${c#*:}" "$ROOT/${c%%:*}" >&2 || st=1
     done
-    for f in "${SPECS[@]}"; do
-        cmp -s "$RSENML/spec/$f" "$ROOT/spec/$f" || { echo "DIFFERS  spec/$f" >&2; st=1; }
-    done
     verify "$ROOT/test/fixtures/exificient" || st=1
     [[ $st -eq 0 ]] && echo "fixtures ok"
     exit $st
@@ -64,10 +60,6 @@ for c in "${COPIES[@]}"; do
     rm -rf "${ROOT:?}/${c%%:*}"
     mkdir -p "$ROOT/${c%%:*}"
     cp -a "$RSENML/${c#*:}/." "$ROOT/${c%%:*}/"
-done
-mkdir -p "$ROOT/spec"
-for f in "${SPECS[@]}"; do
-    cp "$RSENML/spec/$f" "$ROOT/spec/$f"
 done
 verify "$ROOT/test/fixtures/exificient"
 echo "fixtures copied from $RSENML"

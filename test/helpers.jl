@@ -1,12 +1,27 @@
-# Test vectors from the RFC text (spec/rfc8428.txt), so each one can be traced to
+# Test vectors from the RFC 8428 text (https://www.rfc-editor.org/rfc/rfc8428,
+# downloaded by scripts/fetch-standards.sh), so each one can be traced to
 # the RFC. A port of rsenml-tests' src/lib.rs.
 
-const SPEC = joinpath(@__DIR__, "..", "spec")
+# The cache scripts/fetch-standards.sh fills: $SENML_STANDARDS, else
+# ${XDG_CACHE_HOME:-~/.cache}/senml.jl/standards. Standards are linked, not committed.
+function standards_dir()
+    dir = get(ENV, "SENML_STANDARDS", "")
+    isempty(dir) || return dir
+    cache = get(ENV, "XDG_CACHE_HOME", "")
+    isempty(cache) && (cache = joinpath(homedir(), ".cache"))
+    return joinpath(cache, "senml.jl", "standards")
+end
+
+function standard_path(file)
+    path = joinpath(standards_dir(), file)
+    isfile(path) || error("$path is missing: run scripts/fetch-standards.sh")
+    return path
+end
 
 "The RFC text, with page breaks (footer, form feed, header) removed."
 function rfc_text()
     out = IOBuffer()
-    for line in eachline(joinpath(SPEC, "rfc8428.txt"))
+    for line in eachline(standard_path("rfc8428.txt"))
         t = lstrip(line)
         (startswith(t, "Jennings, et al.") || startswith(t, "RFC 8428  ") || startswith(t, '\f')) && continue
         println(out, line)

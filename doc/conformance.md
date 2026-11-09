@@ -29,7 +29,7 @@ violations in the first place).
 | 17 | CBOR numbers convert back to the same double; `bver` unsigned only | 6 | `write_number`, CBOR reader | `cbor.jl` / numbers take the smallest exact form, every numeric form is read, record rules |
 | 18 | CBOR: definite-length strings; definite array for SenML, indefinite for SenSML | 6 | `src/cbor.jl` | `cbor.jl` / SenSML uses an indefinite array, record rules; `facade.jl` / SenSML CBOR is an indefinite array |
 | 19 | XML: UTF-8, namespace `urn:ietf:params:xml:ns:senml`, `sensml`/`senml` elements, Table 5 attributes | 7 | `src/xml.jl` | `xml.jl` / RFC 8428 section 7, namespaces, prefixes and foreign attributes, structure is enforced |
-| 20 | EXI: strict schema mode with the RFC's XSD | 8 | `src/exi.jl`, `spec/senml.xsd`, `scripts/gen-tables.sh` | `exi.jl` / RFC 8428 section 8 both ways; the gate checks the generated tables |
+| 20 | EXI: strict schema mode with the RFC's XSD | 8 | `src/exi.jl`, the [RFC 8428 section 8 XSD](https://www.rfc-editor.org/rfc/rfc8428#section-8), `scripts/gen-tables.sh` | `exi.jl` / RFC 8428 section 8 both ways; the gate checks the generated tables |
 | 21 | EXI header includes options with schemaId "a"; no cookie by default | 8 | `src/exi.jl` | `exi.jl` / schemaId is checked, cookie |
 | 22 | EXI bit-packed and byte-aligned | 8 | `alignment` keyword | `exi.jl` / RFC 8428 section 8 both ways |
 | 23 | Units registry | 12.1 | `src/core/units.jl` (Table 6), `Validator(registered_units = true)` | `core.jl` / units, validation |
@@ -38,7 +38,9 @@ violations in the first place).
 
 ## The RFC's examples
 
-All extracted from `spec/rfc8428.txt` at test time (`test/helpers.jl`):
+All extracted at test time (`test/helpers.jl`) from the
+[RFC 8428](https://www.rfc-editor.org/rfc/rfc8428) text that
+`scripts/fetch-standards.sh` downloads:
 
 | Vector | Result |
 |---|---|
