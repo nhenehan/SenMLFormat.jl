@@ -6,15 +6,15 @@
 #                             and the current one, then examples/basics
 #   scripts/gate.sh --quick   tests on the current Julia only
 #
-# Env: SENML_JULIA_OLDEST   juliaup channel of the oldest Julia (default 1.11;
-#                           it must be a 1.11.x)
+# Env: SENML_JULIA_OLDEST   juliaup channel of the oldest Julia (default lts;
+#                           it must be a 1.10.x)
 #      SENML_JULIA_CURRENT  juliaup channel of the current Julia (default 1.12)
 #      SENML_EXIFORMAT_PATH a local EXIFormat checkout (see scripts/dev-env.sh)
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
-OLDEST="${SENML_JULIA_OLDEST:-1.11}"
+OLDEST="${SENML_JULIA_OLDEST:-lts}"
 CURRENT="${SENML_JULIA_CURRENT:-1.12}"
 
 QUICK=0
@@ -36,6 +36,7 @@ run_tests() { # channel
 }
 
 if [[ $QUICK -eq 0 ]]; then
+    export SENML_REQUIRE_STANDARDS=1
     step "third-party pins"
     scripts/fetch-third-party.sh --check
     step "standards (RFC text, fetched, not committed)"
@@ -46,8 +47,8 @@ if [[ $QUICK -eq 0 ]]; then
     scripts/gen-tables.sh --check
 
     oldest_version="$(julia +"$OLDEST" --startup-file=no -e 'print(VERSION)')"
-    [[ "$oldest_version" == 1.11.* ]] || {
-        echo "juliaup channel '$OLDEST' is Julia $oldest_version, not 1.11.x (set SENML_JULIA_OLDEST)" >&2
+    [[ "$oldest_version" == 1.10.* ]] || {
+        echo "juliaup channel '$OLDEST' is Julia $oldest_version, not 1.10.x (set SENML_JULIA_OLDEST)" >&2
         exit 1
     }
     step "tests on Julia $oldest_version ($OLDEST)"

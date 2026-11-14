@@ -7,7 +7,6 @@
 #
 # rsenml: the Rust SenML library SenMLFormat is ported from. Source of the test
 #   fixtures (scripts/sync-fixtures.sh): its exported vectors and cases, the
-#   EXIficient 1.0.7 streams, the RFC text and the XML schema. Pinned by a local
-#   commit until rsenml has a release with fixtures/export.
+#   EXIficient 1.0.7 streams. Pinned by release tag.
 
-rsenml ../rsenml 41edb29e81d26ab297fe32b9afce8824741c71c2
+rsenml https://github.com/nhenehan/rsenml.git v0.9.2

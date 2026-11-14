@@ -39,11 +39,11 @@ end
 @testset "exi" begin
     @testset "RFC 8428 section 8 both ways" begin
         @test length(RFC_BIT_PACKED) == 0x3f
-        @test RFC_BIT_PACKED == hex_dumps("8")[1]
+        @rfc_test RFC_BIT_PACKED == hex_dumps("8")[1]
         @test E.decode(RFC_BIT_PACKED) == bit_packed_pack()
         @test E.encode(bit_packed_pack()) == RFC_BIT_PACKED
         @test length(RFC_BYTE_ALIGNED) == 0x31
-        @test RFC_BYTE_ALIGNED == hex_dumps("8")[2]
+        @rfc_test RFC_BYTE_ALIGNED == hex_dumps("8")[2]
         @test E.decode(RFC_BYTE_ALIGNED) == byte_aligned_pack()
         @test E.encode(byte_aligned_pack(); alignment = :byte_aligned) == RFC_BYTE_ALIGNED
     end

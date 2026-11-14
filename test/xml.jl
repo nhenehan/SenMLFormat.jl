@@ -29,7 +29,7 @@ one_record(attrs) = X.decode("<sensml $NS><senml n=\"a\" $attrs/></sensml>")
 
 @testset "xml" begin
     @testset "RFC 8428 section 7" begin
-        @test X.decode(xml_examples("7")[1]) == X.decode(RFC_SECTION_7)
+        @rfc_test X.decode(xml_examples("7")[1]) == X.decode(RFC_SECTION_7)
         pack = X.decode(RFC_SECTION_7)
         @test pack == xml_rfc_pack()
         bytes = X.encode(pack)

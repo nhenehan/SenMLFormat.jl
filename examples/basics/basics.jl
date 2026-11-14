@@ -1,7 +1,7 @@
 # SenMLFormat basics: build a pack, write it in every format, read it back,
 # resolve it, and stream SenSML record by record.
 #
-#   julia --project=examples/basics -e 'using Pkg; Pkg.instantiate()'
+#   julia --project=examples/basics -e 'using Pkg; Pkg.develop(path=".")'   # once, from a clone
 #   julia --project=examples/basics examples/basics/basics.jl
 
 using SenMLFormat

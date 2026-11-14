@@ -147,7 +147,7 @@ bench/run.sh                   # speed next to rsenml (needs cargo), writes doc/
 | `scripts/fetch-standards.sh [--check]` | [RFC 8428](https://www.rfc-editor.org/rfc/rfc8428) from rfc-editor.org, and its section 8 XSD taken out of it, checked by sha256 (`standards.lock`), in `~/.cache/senmlformat/standards` |
 | `scripts/sync-fixtures.sh [--check]` | rsenml's exported vectors and cases, the EXIficient streams |
 | `scripts/gen-tables.sh [--check]` | EXI grammar tables of the [RFC 8428 section 8 XSD](https://www.rfc-editor.org/rfc/rfc8428#section-8) (EXIFormat's schema compiler, schemaId "a") |
-| `scripts/gate.sh [--quick]` | tests with Aqua and JET on Julia 1.11 and 1.12, the checks above, the example |
+| `scripts/gate.sh [--quick]` | tests with Aqua and JET on Julia 1.10 and 1.12, the checks above, the example |
 | `bench/run.sh` | SenMLFormat and rsenml timed the same way on the same data |
 
 ## How this was made

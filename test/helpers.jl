@@ -18,6 +18,21 @@ function standard_path(file)
     return path
 end
 
+# Without the downloaded RFC, the tests that read it are skipped with a warning,
+# so `Pkg.test` works for users. SENML_REQUIRE_STANDARDS (the gate sets it)
+# makes the RFC required.
+const HAVE_RFC = isfile(joinpath(standards_dir(), "rfc8428.txt"))
+if !HAVE_RFC
+    haskey(ENV, "SENML_REQUIRE_STANDARDS") &&
+        error("$(joinpath(standards_dir(), "rfc8428.txt")) is missing: run scripts/fetch-standards.sh")
+    @warn "skipping the tests that read RFC 8428: run scripts/fetch-standards.sh to download it"
+end
+
+"`@test ex` when the RFC text is there, else `@test_skip ex`."
+macro rfc_test(ex)
+    return esc(:(HAVE_RFC ? @test($ex) : @test_skip($ex)))
+end
+
 "The RFC text, with page breaks (footer, form feed, header) removed."
 function rfc_text()
     out = IOBuffer()
@@ -29,7 +44,7 @@ function rfc_text()
     return String(take!(out))
 end
 
-const RFC = rfc_text()
+const RFC = HAVE_RFC ? rfc_text() : ""
 
 # A heading is a line that starts with a section number (digits and dots)
 # followed by two spaces.

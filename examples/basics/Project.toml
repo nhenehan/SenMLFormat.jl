@@ -1,5 +1,2 @@
 [deps]
 SenMLFormat = "f86ae54c-015b-4025-bb5e-8bcb5d80e55a"
-
-[sources]
-SenMLFormat = {path = "../.."}

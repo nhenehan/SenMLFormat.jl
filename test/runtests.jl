@@ -11,7 +11,7 @@ using Test
     include("xml.jl")
     include("exi.jl")
     include("facade.jl")
-    include("rfc_examples.jl")
+    HAVE_RFC ? include("rfc_examples.jl") : @test_skip "RFC examples"
     include("shared_vectors.jl")
     include("robustness.jl")
     include("quality.jl")

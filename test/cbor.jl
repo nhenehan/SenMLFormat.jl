@@ -31,7 +31,7 @@ end
 @testset "cbor" begin
     @testset "RFC 8428 section 6 both ways" begin
         @test length(RFC_SECTION_6) == 0xc3
-        @test RFC_SECTION_6 == hex_dumps("6")[1]
+        @rfc_test RFC_SECTION_6 == hex_dumps("6")[1]
         @test C.decode(RFC_SECTION_6) == rfc_pack()
         @test C.encode(rfc_pack()) == RFC_SECTION_6
     end

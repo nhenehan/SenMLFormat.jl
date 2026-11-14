@@ -41,7 +41,7 @@ rsenml's own output (`test/fixtures/export`, written by rsenml's
 | Robustness testing | cargo-fuzz targets for every decoder, plus mutation tests | mutation tests (truncations and 64 random changes per input by default; set `SENML_MUTATIONS` for more); no coverage-guided fuzzing |
 | Static checks | clippy, `forbid(unsafe_code)` | Aqua, JET |
 | Package registry | not on crates.io (GitHub tag) | General registry (`Pkg.add("SenMLFormat")`) |
-| Minimum toolchain | Rust 1.88 | Julia 1.11 |
+| Minimum toolchain | Rust 1.88 | Julia 1.10 |
 | Dependencies | nanojson, minicbor, xmlparser, rexi | EXIFormat, PrecompileTools (own JSON, CBOR and XML readers) |
 | Example | CoAP todo list with clients in four languages | `examples/basics` |
 
