@@ -135,10 +135,17 @@ has_base_fields(r::Record) =
     r.bn !== nothing || r.bt !== nothing || r.bu !== nothing || r.bv !== nothing ||
     r.bs !== nothing || r.bver !== nothing || any(is_base, r.extensions)
 
-"True when the record carries any regular (non-base) field."
+"""
+    has_regular_fields(r::Record)
+
+True when the record carries any regular (non-base) field of RFC 8428. Extensions
+do not count: a reader ignores labels it does not know
+([section 4.4](https://www.rfc-editor.org/rfc/rfc8428#section-4.4)), so a record of
+base fields plus an unknown label is still base-only.
+"""
 has_regular_fields(r::Record) =
     r.n !== nothing || r.u !== nothing || r.value !== nothing || r.s !== nothing ||
-    r.t !== nothing || r.ut !== nothing || any(e -> !is_base(e), r.extensions)
+    r.t !== nothing || r.ut !== nothing
 
 """
     is_base_only(r::Record)

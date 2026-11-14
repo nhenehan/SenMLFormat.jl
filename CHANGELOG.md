@@ -34,7 +34,7 @@ same bytes as rsenml in every format.
   `StreamEncoder`. Both section 8 examples come out byte for byte, both ways, and
   all 32 EXIficient 1.0.7 test streams match. EXI cannot carry -0.0, which is
   written as 0.
-- **Checked against rsenml**: the same bytes and verdicts on rsenml's 64 test
+- **Checked against rsenml**: the same bytes and verdicts on rsenml's 66 test
   vectors and 16 test cases in every media type; truncated and randomly changed
   input only ever gives a `SenMLError`.
 - `examples/basics`, `doc/design.md` (the reading of unclear points),

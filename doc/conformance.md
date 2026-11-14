@@ -54,7 +54,7 @@ All extracted at test time (`test/helpers.jl`) from the
 
 ## Beyond the RFC's examples
 
-- **Same verdicts as rsenml.** All 64 of rsenml's conformance vectors (JSON, CBOR,
+- **Same verdicts as rsenml.** All 66 of rsenml's conformance vectors (JSON, CBOR,
   SenSML CBOR; exported by rsenml's `scripts/export-fixtures.sh`) get rsenml's
   verdict, and the accepted ones the expected records (`shared_vectors.jl`).
 - **Same bytes as rsenml.** For every accepted vector and all 16 test cases, JSON,

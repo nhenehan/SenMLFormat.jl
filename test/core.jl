@@ -31,7 +31,10 @@
         @test hash(Record(n = "a", v = -0.0)) == hash(Record(n = "a", v = 0.0))
         @test SenMLFormat.is_base_only(Record(bn = "x"))
         @test !SenMLFormat.is_base_only(Record(bn = "x", n = "a"))
-        @test !SenMLFormat.is_base_only(Record(extensions = ["x" => 1]))
+        # Unknown labels are ignored (RFC 8428 section 4.4), so they never make a
+        # record regular.
+        @test SenMLFormat.is_base_only(Record(extensions = ["x" => 1]))
+        @test SenMLFormat.is_base_only(Record(bn = "x", extensions = ["ver" => 2]))
         @test SenMLFormat.is_base_only(Record(extensions = ["bx" => 1]))
         p = Pack([r])
         push!(p, Record(n = "b", v = 2))
@@ -69,6 +72,8 @@
         # RFC 8428 section 5.1.7: a base-only record is context.
         @test v(Record(bn = "urn:dev:ow:10e2073a01080063:"), Record(n = "temp", u = "Cel", v = 23.1)) === :ok
         @test v(Record(n = "a", t = 1)) === :MissingValue
+        @test v(Record(bn = "a:", bt = 1, extensions = ["ver" => 2]), Record(n = "x", v = 1)) === :ok
+        @test v(Record(bn = "a:", extensions = ["ver_" => 2]), Record(n = "x", v = 1)) === :MustUnderstand
         @test v(Record(n = "a", s = 1)) === :ok
         @test v(Record(v = 1)) === :MissingName
         @test v(Record(n = "-x", v = 1)) === :InvalidName

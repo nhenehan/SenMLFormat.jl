@@ -9,7 +9,7 @@ SenMLFormat gives the same answers as rsenml, and the tests check it against
 rsenml's own output (`test/fixtures/export`, written by rsenml's
 `scripts/export-fixtures.sh`):
 
-- the same verdict (accepted, or the same error kind) on all 64 of rsenml's
+- the same verdict (accepted, or the same error kind) on all 66 of rsenml's
   conformance vectors;
 - the same bytes in all eight media types and both EXI alignments for every test
   case and every accepted vector, and the same sizes on the benchmark data;

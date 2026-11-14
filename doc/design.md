@@ -69,7 +69,7 @@ the same double; CBOR numbers take the smallest exact form.
   xmlparser. SenMLFormat does not use JSON.jl, CBOR.jl or XML.jl: each reader is
   written here with the grammar rules of the Rust crate it stands for, quirks
   included (for example a value cut off inside a CBOR map is `:Syntax`, as in
-  minicbor, not `:Incomplete`), so the 64 shared vectors get the same verdict.
+  minicbor, not `:Incomplete`), so the 66 shared vectors get the same verdict.
   XML.jl is not used: it gives no error offsets and accepts input xmlparser
   refuses.
 - **Shortest numbers.** Julia's `repr(Float64)` is Ryu, like Rust's, but Rust

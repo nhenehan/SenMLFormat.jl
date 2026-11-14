@@ -52,7 +52,7 @@ Changes to any of these need tests.
 
 ## Interoperability
 
-The bytes must equal rsenml's in all eight media types and both EXI alignments, and the verdicts must equal rsenml's on its 64 test vectors (`test/shared_vectors.jl`, `test/facade.jl`).
+The bytes must equal rsenml's in all eight media types and both EXI alignments, and the verdicts must equal rsenml's on its 66 test vectors (`test/shared_vectors.jl`, `test/facade.jl`).
 
 `test/fixtures/export` and `test/fixtures/exificient` come only from the rsenml version pinned in `third-party.lock`, copied by `scripts/sync-fixtures.sh`. Never edit them here. A change in behaviour goes into rsenml first, then into the fixtures, then here.
 

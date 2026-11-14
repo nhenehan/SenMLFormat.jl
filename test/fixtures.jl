@@ -25,7 +25,7 @@ exificient_manifest() = read_tsv(joinpath(FIXTURES, "exificient", "manifest.tsv"
 
 @testset "fixtures" begin
     vs = vectors()
-    @test length(vs) == 64
+    @test length(vs) == 66
     @test all(v -> length(v) == 14, vs)
     @test all(v -> v["fmt"] in ("json", "cbor", "cbor-sensml"), vs)
     @test all(v -> v["expect"] in ("accept", "reject"), vs)
