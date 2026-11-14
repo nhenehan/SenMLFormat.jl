@@ -6,7 +6,7 @@
         exs = json_examples()
         @test length(exs) == 11
         for ex in exs
-            @test !isempty(SenML.Json.decode(ex.json))
+            @test !isempty(SenMLFormat.Json.decode(ex.json))
         end
     end
 
@@ -15,14 +15,14 @@
         # feed it without the closing bracket and every record still comes out.
         ex = only(e for e in json_examples() if e.partial_stream)
         open = rstrip(rstrip(ex.json), ']')
-        d = SenML.Json.StreamDecoder()
+        d = SenMLFormat.Json.StreamDecoder()
         push!(d, open)
         n = 0
-        while SenML.Json.next_record!(d) !== nothing
+        while SenMLFormat.Json.next_record!(d) !== nothing
             n += 1
         end
         @test n == 9
-        @test !SenML.Json.isfinished(d)
+        @test !SenMLFormat.Json.isfinished(d)
     end
 
     @testset "5.1.4 is 5.1.3 resolved" begin
@@ -50,43 +50,43 @@
 
     @testset "section 6 CBOR is 5.1.2 with an explicit zero time" begin
         dump = hex_dumps("6")[1]
-        cbor = SenML.Cbor.decode(dump)
+        cbor = SenMLFormat.Cbor.decode(dump)
         json = example("5.1.2b")
         # The CBOR example writes `6: 0` on the last record; JSON omits the time.
         last = json[end]
         json[end] = Record(last.bn, last.bt, last.bu, last.bv, last.bs, last.bver, last.n,
             last.u, last.value, last.s, 0.0, last.ut, last.extensions)
         @test cbor == json
-        @test SenML.Cbor.encode(json) == dump
+        @test SenMLFormat.Cbor.encode(json) == dump
         @test resolve(cbor; now = 1e9) == resolve(example("5.1.2b"); now = 1e9)
     end
 
     @testset "section 7 XML is 5.1.2" begin
-        @test SenML.Xml.decode(xml_examples("7")[1]) == example("5.1.2b")
+        @test SenMLFormat.Xml.decode(xml_examples("7")[1]) == example("5.1.2b")
         # The section 8 XML examples: the first holds 5.1.2's first example.
-        @test SenML.Xml.decode(xml_examples("8")[1]) == example("5.1.2a")
-        @test length(SenML.Xml.decode(xml_examples("8")[2])) == 1
+        @test SenMLFormat.Xml.decode(xml_examples("8")[1]) == example("5.1.2a")
+        @test length(SenMLFormat.Xml.decode(xml_examples("8")[2])) == 1
     end
 
     @testset "section 8 EXI dumps are its XML examples" begin
         xml = xml_examples("8")
         dumps = hex_dumps("8")
-        bp = SenML.Xml.decode(xml[1])
-        ba = SenML.Xml.decode(xml[2])
-        @test SenML.Exi.decode(dumps[1]) == bp
-        @test SenML.Exi.decode(dumps[2]) == ba
-        @test SenML.Exi.encode(bp) == dumps[1]
-        @test SenML.Exi.encode(ba; alignment = :byte_aligned) == dumps[2]
+        bp = SenMLFormat.Xml.decode(xml[1])
+        ba = SenMLFormat.Xml.decode(xml[2])
+        @test SenMLFormat.Exi.decode(dumps[1]) == bp
+        @test SenMLFormat.Exi.decode(dumps[2]) == ba
+        @test SenMLFormat.Exi.encode(bp) == dumps[1]
+        @test SenMLFormat.Exi.encode(ba; alignment = :byte_aligned) == dumps[2]
     end
 
     @testset "table 3 sizes" begin
         pack = example("5.1.3")
         # No whitespace and the smallest numbers: smaller than the RFC's 573 and 254.
-        @test length(SenML.Json.encode(pack)) < 573
-        @test length(SenML.Cbor.encode(pack)) <= 254
-        @test length(SenML.Xml.encode(pack)) < 649
+        @test length(SenMLFormat.Json.encode(pack)) < 573
+        @test length(SenMLFormat.Cbor.encode(pack)) <= 254
+        @test length(SenMLFormat.Xml.encode(pack)) < 649
         # EXI: 161 bytes, as in the RFC.
-        @test length(SenML.Exi.encode(pack)) == 161
+        @test length(SenMLFormat.Exi.encode(pack)) == 161
     end
 
     @testset "5.1.7 actuation times" begin

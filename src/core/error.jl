@@ -1,4 +1,4 @@
-# The one error type every SenML.jl codec throws.
+# The one error type every SenMLFormat codec throws.
 
 """
     SenMLError <: Exception

@@ -1,6 +1,6 @@
 # SenML JSON reading and writing: rsenml-json's tests, ported.
 
-const J = SenML.Json
+const J = SenMLFormat.Json
 
 @testset "json" begin
     @testset "RFC 8428 5.1.2 round trips byte for byte" begin

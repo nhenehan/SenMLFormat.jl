@@ -10,12 +10,12 @@
 #   scripts/fetch-third-party.sh --print-dir     print the cache directory
 #
 # Env: SENML_THIRD_PARTY  cache directory
-#      (default ${XDG_CACHE_HOME:-$HOME/.cache}/senml.jl/third_party)
+#      (default ${XDG_CACHE_HOME:-$HOME/.cache}/senmlformat/third_party)
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 LOCK="$ROOT/third-party.lock"
-DIR="${SENML_THIRD_PARTY:-${XDG_CACHE_HOME:-$HOME/.cache}/senml.jl/third_party}"
+DIR="${SENML_THIRD_PARTY:-${XDG_CACHE_HOME:-$HOME/.cache}/senmlformat/third_party}"
 
 MODE=fetch
 UPDATE=""

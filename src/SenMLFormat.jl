@@ -1,5 +1,5 @@
 """
-    SenML
+    SenMLFormat
 
 Sensor Measurement Lists ([RFC 8428](https://www.rfc-editor.org/rfc/rfc8428)):
 records and packs, read and written as JSON, CBOR, XML and EXI. The Julia twin of
@@ -13,14 +13,14 @@ the Rust library rsenml: same rules, same bytes.
 - [`lookup_unit`](@ref), [`UNITS`](@ref): the units registry (section 12.1).
 - [`RecordSelector`](@ref): `rec=` fragment identifiers (section 9).
 - [`MediaType`](@ref): media types and CoAP Content-Formats (sections 12.3, 12.5).
-- [`SenML.decode`](@ref), [`SenML.encode`](@ref), [`SenML.encode_unchecked`](@ref):
+- [`SenMLFormat.decode`](@ref), [`SenMLFormat.encode`](@ref), [`SenMLFormat.encode_unchecked`](@ref):
   any format, chosen by media type. Not exported, as `decode` and `encode` are
-  common names; call them as `SenML.decode(SENML_JSON, bytes)`.
-- `SenML.Json`, `SenML.Cbor`, `SenML.Xml`, `SenML.Exi`: the JSON (section 5), CBOR
+  common names; call them as `SenMLFormat.decode(SENML_JSON, bytes)`.
+- `SenMLFormat.Json`, `SenMLFormat.Cbor`, `SenMLFormat.Xml`, `SenMLFormat.Exi`: the JSON (section 5), CBOR
   (section 6), XML (section 7) and EXI (section 8) formats, with their record
   readers, stream writers and options.
 """
-module SenML
+module SenMLFormat
 
 export Record, Extension, Pack, Value, ResolvedRecord, SenMLError
 export validate, Validator, check!, finish, valid_name, SUPPORTED_VERSION

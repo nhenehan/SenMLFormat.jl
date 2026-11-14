@@ -1,11 +1,11 @@
-# Sources SenML.jl tests against, fetched by scripts/fetch-third-party.sh into
-# ${SENML_THIRD_PARTY:-${XDG_CACHE_HOME:-~/.cache}/senml.jl/third_party} (never
+# Sources SenMLFormat tests against, fetched by scripts/fetch-third-party.sh into
+# ${SENML_THIRD_PARTY:-${XDG_CACHE_HOME:-~/.cache}/senmlformat/third_party} (never
 # into this working tree). Each line: <name> <git url, or a path relative to this
 # repository> <40-char commit, or a tag>.
 # Pins change through `scripts/fetch-third-party.sh --update <name>` (a commit)
 # or by writing a release tag by hand.
 #
-# rsenml: the Rust SenML library SenML.jl is ported from. Source of the test
+# rsenml: the Rust SenML library SenMLFormat is ported from. Source of the test
 #   fixtures (scripts/sync-fixtures.sh): its exported vectors and cases, the
 #   EXIficient 1.0.7 streams, the RFC text and the XML schema. Pinned by a local
 #   commit until rsenml has a release with fixtures/export.

@@ -1,6 +1,6 @@
 # SenML XML reading and writing: rsenml-xml's tests, ported.
 
-const X = SenML.Xml
+const X = SenMLFormat.Xml
 
 const RFC_SECTION_7 = """<sensml xmlns="urn:ietf:params:xml:ns:senml">
   <senml bn="urn:dev:ow:10e2073a0108006:" bt="1.276020076001e+09"

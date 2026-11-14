@@ -1,14 +1,14 @@
 """
-    SenML.Json
+    SenMLFormat.Json
 
 The JSON format of SenML
 ([RFC 8428 section 5](https://www.rfc-editor.org/rfc/rfc8428#section-5)): media
 types `application/senml+json` and, for streams, `application/sensml+json`.
 
 ```julia
-pack = SenML.Json.decode(\"\"\"[{"bn":"urn:dev:ow:10e2073a01080063:","n":"voltage","u":"V","v":120.1},
+pack = SenMLFormat.Json.decode(\"\"\"[{"bn":"urn:dev:ow:10e2073a01080063:","n":"voltage","u":"V","v":120.1},
                                {"n":"current","u":"A","v":1.2}]\"\"\")
-SenML.Json.encode(pack)  # the same JSON, without whitespace
+SenMLFormat.Json.encode(pack)  # the same JSON, without whitespace
 ```
 
 Reading checks the JSON grammar, label types, repeated labels, at most one value
@@ -18,12 +18,12 @@ other unknown labels are skipped.
 """
 module Json
 
-using ..SenML: SenML, Record, Pack, Extension, Value, SenMLError, Validator, check!,
+using ..SenMLFormat: SenMLFormat, Record, Pack, Extension, Value, SenMLError, Validator, check!,
     validate, syntax_error, incomplete, record_error, RecordBuilder, set!, extension!,
     skipped_extension, build, label_from_text, label_type, label_text, value_label,
     T_STRING, T_NUMBER, T_VERSION, T_BOOL, T_DATA, L_BVER, L_V, L_VS, L_VB, L_VD,
     parse_number, write_number, base64url_decode, base64url_encode
-import ..SenML: finish
+import ..SenMLFormat: finish
 
 # How deep arrays and objects may nest inside the value of an unknown label before
 # the reader gives up.

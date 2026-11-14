@@ -1,6 +1,6 @@
 # Standards the tests and generators read, fetched from their publishers by
 # scripts/fetch-standards.sh into
-# ${SENML_STANDARDS:-${XDG_CACHE_HOME:-~/.cache}/senml.jl/standards}. They are
+# ${SENML_STANDARDS:-${XDG_CACHE_HOME:-~/.cache}/senmlformat/standards}. They are
 # linked, never committed.
 #
 # Each line: <file> <sha256> <source: a URL, or a part of an earlier file>

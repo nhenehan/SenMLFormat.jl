@@ -1,15 +1,15 @@
 """
-    SenML.Exi
+    SenMLFormat.Exi
 
 The EXI format of SenML
 ([RFC 8428 section 8](https://www.rfc-editor.org/rfc/rfc8428#section-8)): media
 types `application/senml-exi` and `application/sensml-exi`. Strict
-schema-informed EXI with the RFC's schema, through JExi.
+schema-informed EXI with the RFC's schema, through EXIFormat.
 
 ```julia
-bytes = SenML.Exi.encode(pack)                              # bit-packed
-bytes = SenML.Exi.encode(pack; alignment = :byte_aligned)   # byte-aligned
-SenML.Exi.decode(bytes)
+bytes = SenMLFormat.Exi.encode(pack)                              # bit-packed
+bytes = SenMLFormat.Exi.encode(pack; alignment = :byte_aligned)   # byte-aligned
+SenMLFormat.Exi.decode(bytes)
 ```
 
 - The header carries the EXI options with schemaId "a" (section 8); a stream that
@@ -26,14 +26,14 @@ The bytes equal rsenml's and EXIficient's for every test case.
 """
 module Exi
 
-import JExi as J
-using ..SenML: SenML, Record, Pack, Extension, Value, SenMLError, validate,
+import EXIFormat as J
+using ..SenMLFormat: SenMLFormat, Record, Pack, Extension, Value, SenMLError, validate,
     syntax_error, incomplete, record_error, RecordBuilder, set!, build, label_from_text,
     label_type, label_text, T_STRING, T_NUMBER, T_VERSION, T_BOOL, T_DATA, L_BN, L_BT,
     L_BU, L_BV, L_BS, L_BVER, L_N, L_U, L_T, L_UT, L_S, L_V, L_VS, L_VB, L_VD,
     decimal_parts, decimal_to_float, base64url_decode, base64url_encode, XML_NAMESPACE,
     EXI_SCHEMA_ID
-import ..SenML: finish
+import ..SenMLFormat: finish
 
 include("generated/senml_tables.jl")
 
@@ -48,7 +48,7 @@ end
 # The options of RFC 8428 section 8: strict, schemaId "a".
 exi_options(a::Symbol) = J.strict_options(; alignment = exi_alignment(a), schema_id = EXI_SCHEMA_ID)
 
-# A JExi error as a SenMLError. `bit` is where the operation started; offsets are
+# A EXIFormat error as a SenMLError. `bit` is where the operation started; offsets are
 # the byte that holds that bit.
 function exi_error(e::J.ExiError, bit::Integer)::SenMLError
     e isa J.TruncatedError && return incomplete(:exi)
@@ -262,7 +262,7 @@ decode_unchecked(input::AbstractVector{UInt8}; out_of_band::Union{Nothing,Symbol
 
 #------------------------------------------------------------------------ writing
 #
-# The writer drives JExi's encoder with the names' ids from the generated tables,
+# The writer drives EXIFormat's encoder with the names' ids from the generated tables,
 # not with name strings. Attributes go in EXI order (sorted by local name).
 
 const ATTRIBUTE_ORDER = (
@@ -326,7 +326,7 @@ end
 put!(::J.Encoder, _, ::Nothing) = nothing
 put!(e::J.Encoder, q, x::String) = J.attribute!(e, q, x)
 
-# Doubles go to JExi as EXI Floats (a decimal mantissa and exponent): the shortest
+# Doubles go to EXIFormat as EXI Floats (a decimal mantissa and exponent): the shortest
 # decimal digits, with trailing zeros moved into the exponent. That is how
 # EXIficient puts the same XML attribute text into standard form, so the bytes
 # are the same as for the text form.

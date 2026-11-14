@@ -1,5 +1,5 @@
 """
-    SenML.Xml
+    SenMLFormat.Xml
 
 The XML format of SenML
 ([RFC 8428 section 7](https://www.rfc-editor.org/rfc/rfc8428#section-7)): media
@@ -23,12 +23,12 @@ no XML declaration and no whitespace.
 """
 module Xml
 
-using ..SenML: SenML, Record, Pack, Extension, Value, SenMLError, validate,
+using ..SenMLFormat: SenMLFormat, Record, Pack, Extension, Value, SenMLError, validate,
     syntax_error, incomplete, record_error, RecordBuilder, set!, extension!, build,
     label_from_text, label_type, label_text, value_label, T_STRING, T_NUMBER,
     T_VERSION, T_BOOL, T_DATA, parse_number, write_number, base64url_decode,
     write_base64url!, base64url_length, XML_NAMESPACE
-import ..SenML: finish
+import ..SenMLFormat: finish
 
 const XML_PREFIX_NAMESPACE = "http://www.w3.org/XML/1998/namespace"
 
@@ -659,7 +659,7 @@ function next_record!(r::RecordReader)::Union{Nothing,Record}
             r.state == R_PROLOG || throw(xerr(tok.start, "unexpected markup"))
             if !isempty(tok.a)
                 enc = codeunits(str(r, tok.a))
-                (length(enc) == 5 && all(i -> SenML.ascii_lower(enc[i]) == codeunits("utf-8")[i], 1:5)) ||
+                (length(enc) == 5 && all(i -> SenMLFormat.ascii_lower(enc[i]) == codeunits("utf-8")[i], 1:5)) ||
                     throw(xerr(first(tok.a), "SenML XML must be UTF-8"))
             end
         elseif k == TK_TEXT

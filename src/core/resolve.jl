@@ -2,7 +2,7 @@
 # absolute time, so it makes sense on its own, outside its pack.
 # https://www.rfc-editor.org/rfc/rfc8428#section-4.6
 #
-# How SenML.jl reads the spec where it leaves room (the same as rsenml):
+# How SenMLFormat reads the spec where it leaves room (the same as rsenml):
 # - `bv` is added to a numeric `v` only. A record with no value field gets no
 #   value (it is a sum-only record), even when a `bv` is in force.
 # - The sum is `bs + s` when either one is present (section 4.5.4). So a `bs`

@@ -16,7 +16,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-DIR="${SENML_THIRD_PARTY:-${XDG_CACHE_HOME:-$HOME/.cache}/senml.jl/third_party}"
+DIR="${SENML_THIRD_PARTY:-${XDG_CACHE_HOME:-$HOME/.cache}/senmlformat/third_party}"
 RSENML="$DIR/rsenml"
 # directory here -> directory in the rsenml checkout
 COPIES=(

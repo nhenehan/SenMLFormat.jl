@@ -1,10 +1,10 @@
-# SenML.jl basics: build a pack, write it in every format, read it back,
+# SenMLFormat basics: build a pack, write it in every format, read it back,
 # resolve it, and stream SenSML record by record.
 #
 #   julia --project=examples/basics -e 'using Pkg; Pkg.instantiate()'
 #   julia --project=examples/basics examples/basics/basics.jl
 
-using SenML
+using SenMLFormat
 
 # A pack of two records. The first sets a base name for both.
 pack = Pack([
@@ -14,8 +14,8 @@ pack = Pack([
 
 # Write it in each format, then read it back.
 for media in (SENML_JSON, SENML_CBOR, SENML_XML, SENML_EXI)
-    bytes = SenML.encode(media, pack)
-    @assert SenML.decode(media, bytes) == pack
+    bytes = SenMLFormat.encode(media, pack)
+    @assert SenMLFormat.decode(media, bytes) == pack
     println(content_type(media), ": ", length(bytes), " bytes")
 end
 
@@ -25,19 +25,19 @@ for r in resolve(pack; now = 1_700_000_000)
 end
 
 # SenSML over CBOR: the reader gets each record as soon as its bytes arrive.
-stream = SenML.encode(SENSML_CBOR, pack)
-decoder = SenML.Cbor.StreamDecoder()
+stream = SenMLFormat.encode(SENSML_CBOR, pack)
+decoder = SenMLFormat.Cbor.StreamDecoder()
 for chunk in Iterators.partition(stream, 8)
     push!(decoder, collect(chunk))
-    while (r = SenML.Cbor.next_record!(decoder)) !== nothing
+    while (r = SenMLFormat.Cbor.next_record!(decoder)) !== nothing
         println("streamed: ", r.n)
     end
 end
-SenML.Cbor.finish(decoder)
+SenMLFormat.Cbor.finish(decoder)
 
 # Errors name what went wrong, the way rsenml's do.
 try
-    SenML.decode(SENML_JSON, """[{"n":"temp","v":1,"v":2}]""")
+    SenMLFormat.decode(SENML_JSON, """[{"n":"temp","v":1,"v":2}]""")
 catch e
     e isa SenMLError || rethrow()
     println("refused: ", e.kind)

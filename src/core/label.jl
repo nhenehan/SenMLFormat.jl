@@ -3,7 +3,7 @@
 # https://www.rfc-editor.org/rfc/rfc8428#section-4.3
 # https://www.rfc-editor.org/rfc/rfc8428#section-6
 #
-# A label is an Int from 1 to 15: its place in the order SenML.jl writes fields
+# A label is an Int from 1 to 15: its place in the order SenMLFormat writes fields
 # in. That is the order of the RFC's own examples (bn bt bu bv bs bver n u t ut s
 # v vs vb vd), so the JSON of section 5.1.2 and the CBOR of section 6 come out
 # byte for byte.

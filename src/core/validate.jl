@@ -2,7 +2,7 @@
 # field can check alone.
 # https://www.rfc-editor.org/rfc/rfc8428#section-4
 #
-# How SenML.jl reads the spec where it leaves room (the same as rsenml; see
+# How SenMLFormat reads the spec where it leaves room (the same as rsenml; see
 # doc/design.md there):
 # - A record with only base fields sets values for the records after it. It needs
 #   no value or name (the first record of the example in section 5.1.7). Every
@@ -15,7 +15,7 @@
 #   empty and must follow section 4.5.1.
 
 """
-The SenML version SenML.jl implements, which is also the default when there is no
+The SenML version SenMLFormat implements, which is also the default when there is no
 `bver` ([section 4.1](https://www.rfc-editor.org/rfc/rfc8428#section-4.1)).
 """
 const SUPPORTED_VERSION = UInt64(10)

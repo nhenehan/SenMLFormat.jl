@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# SenML.jl next to rsenml, timed the same way on the same data; writes
+# SenMLFormat next to rsenml, timed the same way on the same data; writes
 # doc/performance.md.
 #
 #   bench/run.sh            build bench/rsenml (rsenml v0.9.1 from GitHub), run
@@ -20,7 +20,7 @@ julia +"$CH" --startup-file=no --project=. bench/gen-data.jl
 # busy moment on the machine does not count against one side.
 for _ in 1 2 3; do
     bench/rsenml/target/release/senml-jl-bench-rsenml bench/data >> "$OUT/rsenml.tsv"
-    julia +"$CH" --startup-file=no --project=. bench/bench.jl bench/data >> "$OUT/senml.jl.tsv"
+    julia +"$CH" --startup-file=no --project=. bench/bench.jl bench/data >> "$OUT/senmlformat.tsv"
 done
-julia +"$CH" --startup-file=no bench/report.jl "$OUT/rsenml.tsv" "$OUT/senml.jl.tsv" > doc/performance.md
+julia +"$CH" --startup-file=no bench/report.jl "$OUT/rsenml.tsv" "$OUT/senmlformat.tsv" > doc/performance.md
 echo "wrote doc/performance.md"

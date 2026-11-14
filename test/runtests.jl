@@ -1,8 +1,8 @@
-using SenML
+using SenMLFormat
 using SHA
 using Test
 
-@testset "SenML" begin
+@testset "SenMLFormat" begin
     include("helpers.jl")
     include("fixtures.jl")
     include("core.jl")

@@ -1,5 +1,5 @@
 """
-    SenML.Cbor
+    SenMLFormat.Cbor
 
 The CBOR format of SenML
 ([RFC 8428 section 6](https://www.rfc-editor.org/rfc/rfc8428#section-6)): media
@@ -8,8 +8,8 @@ itself is [RFC 8949](https://www.rfc-editor.org/rfc/rfc8949).
 
 ```julia
 pack = Pack([Record(n = "urn:dev:ow:10e2073a01080063", u = "Cel", v = 23.1)])
-bytes = SenML.Cbor.encode(pack)
-SenML.Cbor.decode(bytes) == pack
+bytes = SenMLFormat.Cbor.encode(pack)
+SenMLFormat.Cbor.decode(bytes) == pack
 ```
 
 Reading:
@@ -32,13 +32,13 @@ This writes the RFC's section 6 example byte for byte.
 """
 module Cbor
 
-using ..SenML: SenML, Record, Pack, Extension, Value, SenMLError, Validator, check!,
+using ..SenMLFormat: SenMLFormat, Record, Pack, Extension, Value, SenMLError, Validator, check!,
     validate, syntax_error, incomplete, record_error, RecordBuilder, set!, extension!,
     skipped_extension, build, label_from_text, label_from_cbor, label_type, label_text,
     value_label, LABEL_CBOR, T_STRING, T_NUMBER, T_VERSION, T_BOOL, T_DATA,
     decimal_to_float, as_exact_int, to_float16_exact, to_float32_exact, L_BN, L_BT, L_BU,
     L_BV, L_BS, L_N, L_U, L_T, L_UT, L_S
-import ..SenML: finish
+import ..SenMLFormat: finish
 
 #------------------------------------------------------------- reading CBOR items
 #

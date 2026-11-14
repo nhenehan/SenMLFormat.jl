@@ -4,7 +4,7 @@
 #                            from test/fixtures/export/cases.tsv)
 #   data/synthetic-200.json  200 records in resolved form: three numeric sensors
 #                            with units and one boolean, 30 s apart from 1.7e9
-using SenML
+using SenMLFormat
 
 const HERE = @__DIR__
 
@@ -24,4 +24,4 @@ records = map(0:199) do i
         Record(n = "urn:dev:ow:10e2073a01080063:$n", u = u, v = ((i * 37) % 1000) / 10.0, t = t)
     end
 end
-write(joinpath(HERE, "data", "synthetic-200.json"), SenML.Json.encode(Pack(records)))
+write(joinpath(HERE, "data", "synthetic-200.json"), SenMLFormat.Json.encode(Pack(records)))

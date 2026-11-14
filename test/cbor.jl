@@ -1,6 +1,6 @@
 # SenML CBOR reading and writing: rsenml-cbor's tests, ported.
 
-const C = SenML.Cbor
+const C = SenMLFormat.Cbor
 
 # RFC 8428 section 6, the hex dump (0xc3 bytes).
 const RFC_SECTION_6 = hex("""
@@ -160,28 +160,28 @@ end
 
 @testset "cross format" begin
     for c in cases()
-        pack = SenML.Json.decode(unhex(c["json"]))
+        pack = SenMLFormat.Json.decode(unhex(c["json"]))
         @test same_pack(C.decode(C.encode(pack)), pack)
         @test same_pack(C.decode_sensml(C.encode_sensml(pack)), pack)
-        @test SenML.Json.encode(C.decode(C.encode(pack))) == unhex(c["json"])
+        @test SenMLFormat.Json.encode(C.decode(C.encode(pack))) == unhex(c["json"])
         @test C.encode_unchecked(pack) == C.encode(pack)
     end
     # JSON -> CBOR -> XML -> EXI -> JSON gives the same JSON bytes.
     for c in cases()
-        json = SenML.Json.encode(exi_view(SenML.Json.decode(unhex(c["json"]))))
-        a = SenML.Json.decode(json)
+        json = SenMLFormat.Json.encode(exi_view(SenMLFormat.Json.decode(unhex(c["json"]))))
+        a = SenMLFormat.Json.decode(json)
         b = C.decode(C.encode(a))
-        x = SenML.Xml.decode(SenML.Xml.encode(b))
-        d = SenML.Exi.decode(SenML.Exi.encode(x))
-        @test SenML.Json.encode(d) == json
+        x = SenMLFormat.Xml.decode(SenMLFormat.Xml.encode(b))
+        d = SenMLFormat.Exi.decode(SenMLFormat.Exi.encode(x))
+        @test SenMLFormat.Json.encode(d) == json
     end
     # Negative zero survives JSON and CBOR.
     p = Pack([Record(n = "a", v = -0.0)])
-    @test same_pack(SenML.Json.decode(SenML.Json.encode(p)), p)
+    @test same_pack(SenMLFormat.Json.decode(SenMLFormat.Json.encode(p)), p)
     @test same_pack(C.decode(C.encode(p)), p)
     # Extensions survive JSON and CBOR.
     json = codeunits("""[{"n":"a","v":1,"origin":"lab-3","weight":0.5,"calibrated":true}]""")
-    p = SenML.Json.decode(json)
+    p = SenMLFormat.Json.decode(json)
     @test C.decode(C.encode(p)) == p
-    @test SenML.Json.encode(C.decode(C.encode(p))) == json
+    @test SenMLFormat.Json.encode(C.decode(C.encode(p))) == json
 end

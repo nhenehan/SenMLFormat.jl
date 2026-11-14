@@ -1,11 +1,11 @@
-# SenML.jl and rsenml compared
+# SenMLFormat and rsenml compared
 
-SenML.jl is the Julia port of rsenml 0.9.1, and this compares only those two.
+SenMLFormat is the Julia port of rsenml 0.9.1, and this compares only those two.
 Speed is in [performance.md](performance.md), which `bench/run.sh` writes.
 
 ## Same results
 
-SenML.jl gives the same answers as rsenml, and the tests check it against
+SenMLFormat gives the same answers as rsenml, and the tests check it against
 rsenml's own output (`test/fixtures/export`, written by rsenml's
 `scripts/export-fixtures.sh`):
 
@@ -19,11 +19,11 @@ rsenml's own output (`test/fixtures/export`, written by rsenml's
 
 ## Features
 
-| Feature | rsenml | SenML.jl |
+| Feature | rsenml | SenMLFormat |
 |---|---|---|
 | JSON, CBOR, XML, EXI read and written | yes | yes |
 | All 8 media types, CoAP Content-Formats | yes | yes |
-| `decode` / `encode` / `encode_unchecked` by media type | yes | yes (`SenML.decode`, not exported) |
+| `decode` / `encode` / `encode_unchecked` by media type | yes | yes (`SenMLFormat.decode`, not exported) |
 | Whole-pack `decode`, `decode_unchecked` | all formats | all formats |
 | Record-by-record `RecordReader` | all formats | all formats |
 | SenSML `StreamDecoder` (bytes as they arrive) | JSON, CBOR | JSON, CBOR |
@@ -40,9 +40,9 @@ rsenml's own output (`test/fixtures/export`, written by rsenml's
 | Optional formats | one Cargo feature per format | all four always loaded |
 | Robustness testing | cargo-fuzz targets for every decoder, plus mutation tests | mutation tests (truncations and up to 2000 random changes per input); no coverage-guided fuzzing |
 | Static checks | clippy, `forbid(unsafe_code)` | Aqua, JET |
-| Package registry | not on crates.io (GitHub tag) | not in General (GitHub; JExi also from GitHub) |
+| Package registry | not on crates.io (GitHub tag) | not in General (GitHub; EXIFormat also from GitHub) |
 | Minimum toolchain | Rust 1.88 | Julia 1.11 |
-| Dependencies | nanojson, minicbor, xmlparser, rexi | JExi, PrecompileTools (own JSON, CBOR and XML readers) |
+| Dependencies | nanojson, minicbor, xmlparser, rexi | EXIFormat, PrecompileTools (own JSON, CBOR and XML readers) |
 | Example | CoAP todo list with clients in four languages | `examples/basics` |
 
 ## Speed in short
@@ -50,7 +50,7 @@ rsenml's own output (`test/fixtures/export`, written by rsenml's
 See [performance.md](performance.md) for the tables. On this machine, with the
 code as of this file:
 
-| Operation | SenML.jl / rsenml |
+| Operation | SenMLFormat / rsenml |
 |---|---|
 | decode (all formats) | about 2× to 4× slower |
 | encode (all formats) | about 1.7× to 2.5× slower |

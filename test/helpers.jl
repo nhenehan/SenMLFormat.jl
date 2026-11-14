@@ -3,13 +3,13 @@
 # the RFC. A port of rsenml-tests' src/lib.rs.
 
 # The cache scripts/fetch-standards.sh fills: $SENML_STANDARDS, else
-# ${XDG_CACHE_HOME:-~/.cache}/senml.jl/standards. Standards are linked, not committed.
+# ${XDG_CACHE_HOME:-~/.cache}/senmlformat/standards. Standards are linked, not committed.
 function standards_dir()
     dir = get(ENV, "SENML_STANDARDS", "")
     isempty(dir) || return dir
     cache = get(ENV, "XDG_CACHE_HOME", "")
     isempty(cache) && (cache = joinpath(homedir(), ".cache"))
-    return joinpath(cache, "senml.jl", "standards")
+    return joinpath(cache, "senmlformat", "standards")
 end
 
 function standard_path(file)
@@ -94,7 +94,7 @@ function json_examples()
 end
 
 example_json(name) = only(e.json for e in json_examples() if e.name == name)
-example(name) = SenML.Json.decode(example_json(name))
+example(name) = SenMLFormat.Json.decode(example_json(name))
 
 "Every `<sensml>` document in a section."
 function xml_examples(number)

@@ -9,6 +9,7 @@
 # Env: SENML_JULIA_OLDEST   juliaup channel of the oldest Julia (default 1.11;
 #                           it must be a 1.11.x)
 #      SENML_JULIA_CURRENT  juliaup channel of the current Julia (default 1.12)
+#      SENML_EXIFORMAT_PATH a local EXIFormat checkout (see scripts/dev-env.sh)
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -27,9 +28,11 @@ step() { echo; echo "== $*"; }
 
 run_tests() { # channel
     # Manifests are not committed; each Julia resolves its own (JET's version
-    # follows the Julia release).
+    # follows the Julia release) in a scratch environment.
     rm -f Manifest.toml test/Manifest.toml
-    julia +"$1" --startup-file=no --project=. -e 'using Pkg; Pkg.test()'
+    local env
+    env="$(scripts/dev-env.sh "$1")"
+    julia +"$1" --startup-file=no --project="$env" -e 'using Pkg; Pkg.test("SenMLFormat")'
 }
 
 if [[ $QUICK -eq 0 ]]; then
@@ -56,9 +59,8 @@ run_tests "$CURRENT"
 
 if [[ $QUICK -eq 0 ]]; then
     step "example"
-    rm -f examples/basics/Manifest.toml
-    julia +"$CURRENT" --startup-file=no --project=examples/basics -e 'using Pkg; Pkg.instantiate()' >/dev/null
-    julia +"$CURRENT" --startup-file=no --project=examples/basics examples/basics/basics.jl >/dev/null
+    env="$(scripts/dev-env.sh "$CURRENT")"
+    julia +"$CURRENT" --startup-file=no --project="$env" examples/basics/basics.jl >/dev/null
 fi
 
 echo

@@ -3,15 +3,15 @@
 @testset "core" begin
     @testset "labels" begin
         for l in 1:15
-            @test SenML.label_from_text(SenML.label_text(l)) == l
-            @test SenML.label_from_cbor(SenML.LABEL_CBOR[l]) == l
-            @test SenML.is_base_label(l) == SenML.is_base_label_text(SenML.label_text(l))
+            @test SenMLFormat.label_from_text(SenMLFormat.label_text(l)) == l
+            @test SenMLFormat.label_from_cbor(SenMLFormat.LABEL_CBOR[l]) == l
+            @test SenMLFormat.is_base_label(l) == SenMLFormat.is_base_label_text(SenMLFormat.label_text(l))
         end
-        @test sort(collect(SenML.LABEL_CBOR)) == collect(-6:8)
-        @test SenML.label_from_cbor(9) == 0
-        @test SenML.label_from_cbor(-7) == 0
-        @test SenML.label_from_text("x") == 0
-        @test SenML.is_must_understand("foo_")
+        @test sort(collect(SenMLFormat.LABEL_CBOR)) == collect(-6:8)
+        @test SenMLFormat.label_from_cbor(9) == 0
+        @test SenMLFormat.label_from_cbor(-7) == 0
+        @test SenMLFormat.label_from_text("x") == 0
+        @test SenMLFormat.is_must_understand("foo_")
     end
 
     @testset "records" begin
@@ -29,10 +29,10 @@
         @test Record(n = "a", vb = true) != Record(n = "a", v = 1)
         @test Record(n = "a", v = -0.0) == Record(n = "a", v = 0.0)
         @test hash(Record(n = "a", v = -0.0)) == hash(Record(n = "a", v = 0.0))
-        @test SenML.is_base_only(Record(bn = "x"))
-        @test !SenML.is_base_only(Record(bn = "x", n = "a"))
-        @test !SenML.is_base_only(Record(extensions = ["x" => 1]))
-        @test SenML.is_base_only(Record(extensions = ["bx" => 1]))
+        @test SenMLFormat.is_base_only(Record(bn = "x"))
+        @test !SenMLFormat.is_base_only(Record(bn = "x", n = "a"))
+        @test !SenMLFormat.is_base_only(Record(extensions = ["x" => 1]))
+        @test SenMLFormat.is_base_only(Record(extensions = ["bx" => 1]))
         p = Pack([r])
         push!(p, Record(n = "b", v = 2))
         @test length(p) == 2
@@ -41,25 +41,25 @@
     end
 
     @testset "builder" begin
-        b = SenML.RecordBuilder(3)
-        SenML.set!(b, SenML.L_N, "a")
-        e = try SenML.set!(b, SenML.L_N, "b"); nothing catch e; e end
+        b = SenMLFormat.RecordBuilder(3)
+        SenMLFormat.set!(b, SenMLFormat.L_N, "a")
+        e = try SenMLFormat.set!(b, SenMLFormat.L_N, "b"); nothing catch e; e end
         @test e isa SenMLError && e.kind === :DuplicateLabel && e.record == 3 && e.label == "n"
-        SenML.set!(b, SenML.L_V, 1.0)
-        @test errkind(() -> SenML.set!(b, SenML.L_VB, true)) === :MultipleValues
-        @test errkind(() -> SenML.extension!(b, "foo_", true)) === :MustUnderstand
-        SenML.extension!(b, "foo", true)
-        @test errkind(() -> SenML.extension!(b, "foo", true)) === :DuplicateLabel
-        @test errkind(() -> SenML.extension!(b, "v", true)) === :DuplicateLabel
+        SenMLFormat.set!(b, SenMLFormat.L_V, 1.0)
+        @test errkind(() -> SenMLFormat.set!(b, SenMLFormat.L_VB, true)) === :MultipleValues
+        @test errkind(() -> SenMLFormat.extension!(b, "foo_", true)) === :MustUnderstand
+        SenMLFormat.extension!(b, "foo", true)
+        @test errkind(() -> SenMLFormat.extension!(b, "foo", true)) === :DuplicateLabel
+        @test errkind(() -> SenMLFormat.extension!(b, "v", true)) === :DuplicateLabel
 
-        b = SenML.RecordBuilder(1)
-        @test errkind(() -> SenML.set!(b, SenML.L_T, "1")) === :WrongType
-        @test errkind(() -> SenML.set!(b, SenML.L_BVER, 5.5)) === :InvalidVersion
-        @test errkind(() -> SenML.set!(b, SenML.L_S, NaN)) === :NonFinite
-        b = SenML.RecordBuilder(1)
-        SenML.set!(b, SenML.L_BVER, 5.0)
-        SenML.set!(b, SenML.L_T, UInt64(7))
-        r = SenML.build(b)
+        b = SenMLFormat.RecordBuilder(1)
+        @test errkind(() -> SenMLFormat.set!(b, SenMLFormat.L_T, "1")) === :WrongType
+        @test errkind(() -> SenMLFormat.set!(b, SenMLFormat.L_BVER, 5.5)) === :InvalidVersion
+        @test errkind(() -> SenMLFormat.set!(b, SenMLFormat.L_S, NaN)) === :NonFinite
+        b = SenMLFormat.RecordBuilder(1)
+        SenMLFormat.set!(b, SenMLFormat.L_BVER, 5.0)
+        SenMLFormat.set!(b, SenMLFormat.L_T, UInt64(7))
+        r = SenMLFormat.build(b)
         @test r.bver === UInt64(5)
         @test r.t === 7.0
     end
@@ -210,7 +210,7 @@
                              ("foob", "Zm9vYg"), ("fooba", "Zm9vYmE"), ("foobar", "Zm9vYmFy")]
             @test base64url_encode(codeunits(data)) == text
             @test base64url_decode(text) == codeunits(data)
-            @test SenML.base64url_length(ncodeunits(data)) == ncodeunits(text)
+            @test SenMLFormat.base64url_length(ncodeunits(data)) == ncodeunits(text)
         end
         # RFC 8428 section 5.1.5: "aGkgCg" is "hi \n".
         @test base64url_decode("aGkgCg") == codeunits("hi \n")
@@ -230,53 +230,53 @@
                           (763219084949297.25, "763219084949297.3"),
                           (-1120781076602245.25, "-1120781076602245.3"),
                           (1855097662971146.25, "1855097662971146.3")]
-            @test SenML.format_number(v) == text
+            @test SenMLFormat.format_number(v) == text
             @test reinterpret(UInt64, parse(Float64, text)) == reinterpret(UInt64, v)
         end
-        @test SenML.decimal_parts(120.1) == (1201, -1)
-        @test SenML.decimal_parts(1.2) == (12, -1)
-        @test SenML.decimal_parts(20.0) == (2, 1)
-        @test SenML.decimal_parts(-0.5) == (-5, -1)
-        @test SenML.decimal_parts(1.276020076001e9) == (1276020076001, -3)
-        @test SenML.decimal_parts(0.0) == (0, 0)
-        @test SenML.decimal_parts(763219084949297.25) == (7632190849492973, -1)
+        @test SenMLFormat.decimal_parts(120.1) == (1201, -1)
+        @test SenMLFormat.decimal_parts(1.2) == (12, -1)
+        @test SenMLFormat.decimal_parts(20.0) == (2, 1)
+        @test SenMLFormat.decimal_parts(-0.5) == (-5, -1)
+        @test SenMLFormat.decimal_parts(1.276020076001e9) == (1276020076001, -3)
+        @test SenMLFormat.decimal_parts(0.0) == (0, 0)
+        @test SenMLFormat.decimal_parts(763219084949297.25) == (7632190849492973, -1)
         for v in [120.1, 1e300, 5e-324, -floatmax(), 60.07965]
-            @test SenML.decimal_to_float(SenML.decimal_parts(v)...) === v
+            @test SenMLFormat.decimal_to_float(SenMLFormat.decimal_parts(v)...) === v
         end
-        @test SenML.as_exact_int(-5.0) === Int64(-5)
-        @test SenML.as_exact_int(1.5) === nothing
-        @test SenML.as_exact_int(-0.0) === nothing
-        @test SenML.as_exact_int(1e300) === nothing
-        @test SenML.as_exact_int(9.223372036854775808e18) === nothing
-        @test SenML.as_exact_int(-9.223372036854775808e18) === typemin(Int64)
-        @test SenML.to_float16_exact(1.5) === Float16(1.5)
-        @test SenML.to_float16_exact(1.2) === nothing
-        @test SenML.to_float16_exact(-0.0) === Float16(-0.0)
-        @test SenML.to_float16_exact(65504.0) === Float16(65504)
-        @test SenML.to_float16_exact(5.960464477539063e-8) === reinterpret(Float16, 0x0001)
-        @test SenML.to_float16_exact(100_000.0) === nothing
-        @test all(b -> SenML.to_float16_exact(Float64(reinterpret(Float16, b))) ===
+        @test SenMLFormat.as_exact_int(-5.0) === Int64(-5)
+        @test SenMLFormat.as_exact_int(1.5) === nothing
+        @test SenMLFormat.as_exact_int(-0.0) === nothing
+        @test SenMLFormat.as_exact_int(1e300) === nothing
+        @test SenMLFormat.as_exact_int(9.223372036854775808e18) === nothing
+        @test SenMLFormat.as_exact_int(-9.223372036854775808e18) === typemin(Int64)
+        @test SenMLFormat.to_float16_exact(1.5) === Float16(1.5)
+        @test SenMLFormat.to_float16_exact(1.2) === nothing
+        @test SenMLFormat.to_float16_exact(-0.0) === Float16(-0.0)
+        @test SenMLFormat.to_float16_exact(65504.0) === Float16(65504)
+        @test SenMLFormat.to_float16_exact(5.960464477539063e-8) === reinterpret(Float16, 0x0001)
+        @test SenMLFormat.to_float16_exact(100_000.0) === nothing
+        @test all(b -> SenMLFormat.to_float16_exact(Float64(reinterpret(Float16, b))) ===
             reinterpret(Float16, b), 0x0000:0x7bff)
-        @test SenML.to_float32_exact(0.1) === nothing
-        @test SenML.to_float32_exact(0.5) === 0.5f0
+        @test SenMLFormat.to_float32_exact(0.1) === nothing
+        @test SenMLFormat.to_float32_exact(0.5) === 0.5f0
         # Parsing: correctly rounded, overflow to infinity, underflow to zero.
-        @test SenML.parse_number("9007199254740993.000000000000000000001") == 9.007199254740994e15
-        @test SenML.parse_number("4.9406564584124654e-324") == 5e-324
-        @test SenML.parse_number("2.4703282292062327e-324") === 0.0
-        @test SenML.parse_number("2.4703282292062328e-324") == 5e-324
-        @test SenML.parse_number("1.7976931348623158e308") == floatmax()
-        @test SenML.parse_number("1.7976931348623159e308") == Inf
-        @test SenML.parse_number("-1e400") == -Inf
-        @test SenML.parse_number("-1e-400") === -0.0
-        @test SenML.parse_number("0.000001e-330") === 0.0
-        @test SenML.parse_number("1" * "0"^400) == Inf
-        @test SenML.parse_number("+.5") == 0.5
-        @test SenML.parse_number("1.000000000000000000000000000000000000001e-99999999999999999999999") === 0.0
-        @test SenML.parse_number("1.000000000000000000000000000000000000001e99999999999999999999999") == Inf
-        @test SenML.decimal_to_float(2345, -2) == 23.45
-        @test SenML.decimal_to_float(1, 23) == 1e23
-        @test SenML.decimal_to_float(-18446744073709551616, -400) === -0.0
-        @test SenML.decimal_to_float(0, 5) === 0.0
+        @test SenMLFormat.parse_number("9007199254740993.000000000000000000001") == 9.007199254740994e15
+        @test SenMLFormat.parse_number("4.9406564584124654e-324") == 5e-324
+        @test SenMLFormat.parse_number("2.4703282292062327e-324") === 0.0
+        @test SenMLFormat.parse_number("2.4703282292062328e-324") == 5e-324
+        @test SenMLFormat.parse_number("1.7976931348623158e308") == floatmax()
+        @test SenMLFormat.parse_number("1.7976931348623159e308") == Inf
+        @test SenMLFormat.parse_number("-1e400") == -Inf
+        @test SenMLFormat.parse_number("-1e-400") === -0.0
+        @test SenMLFormat.parse_number("0.000001e-330") === 0.0
+        @test SenMLFormat.parse_number("1" * "0"^400) == Inf
+        @test SenMLFormat.parse_number("+.5") == 0.5
+        @test SenMLFormat.parse_number("1.000000000000000000000000000000000000001e-99999999999999999999999") === 0.0
+        @test SenMLFormat.parse_number("1.000000000000000000000000000000000000001e99999999999999999999999") == Inf
+        @test SenMLFormat.decimal_to_float(2345, -2) == 23.45
+        @test SenMLFormat.decimal_to_float(1, 23) == 1e23
+        @test SenMLFormat.decimal_to_float(-18446744073709551616, -400) === -0.0
+        @test SenMLFormat.decimal_to_float(0, 5) === 0.0
     end
 
     @testset "errors print" begin

@@ -3,7 +3,7 @@
 using Aqua
 
 @testset "Aqua" begin
-    Aqua.test_all(SenML)
+    Aqua.test_all(SenMLFormat)
 end
 
 const JET_OK = try
@@ -16,6 +16,6 @@ end
 
 if JET_OK
     @testset "JET" begin
-        JET.test_package(SenML; target_modules = (SenML,))
+        JET.test_package(SenMLFormat; target_modules = (SenMLFormat,))
     end
 end

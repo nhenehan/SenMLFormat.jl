@@ -1,6 +1,6 @@
 # Writes doc/performance.md from the TSV output of bench/rsenml and bench/bench.jl.
 # Each file may hold several rounds; the fastest median of each cell is used.
-#   julia bench/report.jl rsenml.tsv senml.jl.tsv
+#   julia bench/report.jl rsenml.tsv senmlformat.tsv
 using Printf
 
 function load(path)
@@ -23,11 +23,11 @@ us(x) = @sprintf("%.1f", x / 1000)
 ratio(a, b) = @sprintf("%.1f×", b / a)
 
 println("""
-# SenML.jl and rsenml: performance
+# SenMLFormat and rsenml: performance
 
 Written by `bench/run.sh`; do not edit by hand.
 
-SenML.jl is compared with rsenml only. Both read the same JSON files
+SenMLFormat is compared with rsenml only. Both read the same JSON files
 (`bench/data`): the RFC 8428 section 5.1.3 example and the 200-record synthetic
 pack of rsenml's `compare` (resolved records: three numeric sensors and a door
 switch, 30 s apart). Both are timed the same way (`median_ns` of rsenml's
@@ -55,7 +55,7 @@ end
 
 for (s, title) in SETS
     println("\n## $title: time per call in µs\n")
-    println("| Codec | Operation | rsenml | SenML.jl | SenML.jl / rsenml |")
+    println("| Codec | Operation | rsenml | SenMLFormat | SenMLFormat / rsenml |")
     println("|---|---|---:|---:|---:|")
     for c in CODECS, op in ("decode", "encode", "decode+resolve")
         haskey(rs, (s, c, op)) || continue

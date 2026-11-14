@@ -10,10 +10,10 @@ bytes_of(input::AbstractString) = codeunits(String(input))
 Reads and checks a pack of the given media type. `input` is bytes or a string.
 The SenSML types also accept streams; for CBOR that means an indefinite-length
 array. For EXI, the header must carry its options (RFC 8428 section 8); use
-`SenML.Exi.decode` with `out_of_band` for streams without them.
+`SenMLFormat.Exi.decode` with `out_of_band` for streams without them.
 
 ```julia
-pack = SenML.decode(SENML_CBOR, bytes)
+pack = SenMLFormat.decode(SENML_CBOR, bytes)
 ```
 """
 function decode(media::MediaType, input)::Pack
@@ -30,7 +30,7 @@ end
 
 Checks a pack and writes it in the given media type. SenSML CBOR uses an
 indefinite-length array; the other SenSML types are written the same as SenML.
-EXI is bit-packed with no cookie; `SenML.Exi.encode` has the other choices.
+EXI is bit-packed with no cookie; `SenMLFormat.Exi.encode` has the other choices.
 """
 function encode(media::MediaType, p::AbstractVector{Record})::Vector{UInt8}
     f = media_format(media)

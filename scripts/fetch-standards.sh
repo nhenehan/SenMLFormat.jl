@@ -10,7 +10,7 @@
 #   scripts/fetch-standards.sh --print-dir  print the cache directory
 #
 # Env: SENML_STANDARDS  cache directory
-#      (default ${XDG_CACHE_HOME:-$HOME/.cache}/senml.jl/standards)
+#      (default ${XDG_CACHE_HOME:-$HOME/.cache}/senmlformat/standards)
 #
 # standards.lock lines: <file> <sha256> <source>. The source is a URL, or a part
 # of another file in the lock:
@@ -23,7 +23,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 LOCK="$ROOT/standards.lock"
-DIR="${SENML_STANDARDS:-${XDG_CACHE_HOME:-$HOME/.cache}/senml.jl/standards}"
+DIR="${SENML_STANDARDS:-${XDG_CACHE_HOME:-$HOME/.cache}/senmlformat/standards}"
 
 MODE=fetch
 case "${1:-}" in

@@ -33,8 +33,8 @@ function mutate(rng::Rng, input::Vector{UInt8})
     return out
 end
 
-const ALL_DECODERS = Function[SenML.Json.decode, SenML.Cbor.decode, SenML.Cbor.decode_sensml,
-    SenML.Xml.decode, SenML.Exi.decode, x -> SenML.Exi.decode(x; out_of_band = :byte_aligned)]
+const ALL_DECODERS = Function[SenMLFormat.Json.decode, SenMLFormat.Cbor.decode, SenMLFormat.Cbor.decode_sensml,
+    SenMLFormat.Xml.decode, SenMLFormat.Exi.decode, x -> SenMLFormat.Exi.decode(x; out_of_band = :byte_aligned)]
 
 function decode_everything(input::Vector{UInt8})
     for f in ALL_DECODERS
@@ -44,7 +44,7 @@ function decode_everything(input::Vector{UInt8})
             e isa SenMLError || return (e, f)
         end
     end
-    for M in (SenML.Json, SenML.Cbor)
+    for M in (SenMLFormat.Json, SenMLFormat.Cbor)
         d = M.StreamDecoder()
         try
             for i in 1:7:length(input)

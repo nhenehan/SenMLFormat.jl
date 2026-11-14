@@ -1,8 +1,8 @@
-# SenML.jl and rsenml: performance
+# SenMLFormat and rsenml: performance
 
 Written by `bench/run.sh`; do not edit by hand.
 
-SenML.jl is compared with rsenml only. Both read the same JSON files
+SenMLFormat is compared with rsenml only. Both read the same JSON files
 (`bench/data`): the RFC 8428 section 5.1.3 example and the 200-record synthetic
 pack of rsenml's `compare` (resolved records: three numeric sensors and a door
 switch, 30 s apart). Both are timed the same way (`median_ns` of rsenml's
@@ -28,7 +28,7 @@ a given "now".
 
 ## RFC 5.1.3 (22 records): time per call in µs
 
-| Codec | Operation | rsenml | SenML.jl | SenML.jl / rsenml |
+| Codec | Operation | rsenml | SenMLFormat | SenMLFormat / rsenml |
 |---|---|---:|---:|---:|
 | JSON | decode | 2.5 | 9.5 | 3.9× |
 | JSON | encode | 2.0 | 3.9 | 2.0× |
@@ -44,7 +44,7 @@ a given "now".
 
 ## synthetic 200: time per call in µs
 
-| Codec | Operation | rsenml | SenML.jl | SenML.jl / rsenml |
+| Codec | Operation | rsenml | SenMLFormat | SenMLFormat / rsenml |
 |---|---|---:|---:|---:|
 | JSON | decode | 60.0 | 115.8 | 1.9× |
 | JSON | encode | 35.5 | 72.0 | 2.0× |

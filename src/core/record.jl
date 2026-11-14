@@ -33,7 +33,7 @@ value_label(::Vector{UInt8}) = L_VD
 A field with a label RFC 8428 does not register
 ([section 4.4](https://www.rfc-editor.org/rfc/rfc8428#section-4.4)).
 
-Readers must ignore unknown labels. SenML.jl still keeps the ones whose value is a
+Readers must ignore unknown labels. SenMLFormat still keeps the ones whose value is a
 single scalar (number, string, Bool or bytes), which is what the CDDL of
 [section 11](https://www.rfc-editor.org/rfc/rfc8428#section-11) allows, so a pack
 converted from one format to another keeps them. JSON and XML cannot tell a string

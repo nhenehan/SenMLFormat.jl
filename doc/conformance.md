@@ -1,6 +1,6 @@
 # RFC 8428 conformance checklist
 
-Each requirement, where SenML.jl implements it, and the test that shows it. The
+Each requirement, where SenMLFormat implements it, and the test that shows it. The
 row numbers are those of
 [rsenml's conformance.md](https://github.com/nhenehan/rsenml/blob/main/doc/conformance.md).
 Tests are named `file` / testset. "All formats" means JSON, CBOR and XML read the
@@ -34,7 +34,7 @@ violations in the first place).
 | 22 | EXI bit-packed and byte-aligned | 8 | `alignment` keyword | `exi.jl` / RFC 8428 section 8 both ways |
 | 23 | Units registry | 12.1 | `src/core/units.jl` (Table 6), `Validator(registered_units = true)` | `core.jl` / units, validation |
 | 24 | `rec=` fragment identifiers | 9 | `RecordSelector` (`src/core/fragment.jl`) | `core.jl` / fragments |
-| 25 | Media types and CoAP Content-Formats | 12.3, 12.5 | `MediaType` (`src/core/media.jl`), `SenML.decode`/`encode` | `core.jl` / media types; `facade.jl` |
+| 25 | Media types and CoAP Content-Formats | 12.3, 12.5 | `MediaType` (`src/core/media.jl`), `SenMLFormat.decode`/`encode` | `core.jl` / media types; `facade.jl` |
 
 ## The RFC's examples
 
@@ -60,7 +60,7 @@ All extracted at test time (`test/helpers.jl`) from the
 - **Same bytes as rsenml.** For every accepted vector and all 16 test cases, JSON,
   CBOR, SenSML CBOR, XML and both EXI alignments equal rsenml's bytes
   (`shared_vectors.jl`); every case in all eight media types through
-  `SenML.encode`, `SenML.encode_unchecked` and `SenML.decode` (`facade.jl`).
+  `SenMLFormat.encode`, `SenMLFormat.encode_unchecked` and `SenMLFormat.decode` (`facade.jl`).
 - **Same bytes as EXIficient.** All 32 EXIficient 1.0.7 streams (16 cases, two
   alignments), byte for byte (`exi.jl`).
 - Every case round-trips through every format, and JSON -> CBOR -> XML -> EXI ->
