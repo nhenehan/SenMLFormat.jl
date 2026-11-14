@@ -2,54 +2,41 @@
 
 ## Unreleased
 
-- **Standards are linked, not committed**: `spec/` is gone.
-  `scripts/fetch-standards.sh` downloads RFC 8428 from rfc-editor.org into
-  `~/.cache/senml.jl/standards` and takes the section 8 XSD out of it, both
-  checked by sha256 against `standards.lock`; the tests and `gen-tables.sh` read
-  them there, and the gate checks them. `sync-fixtures.sh` no longer copies them
-  from rsenml.
-- **Measured next to rsenml**: `bench/` times SenML.jl and rsenml v0.9.1 the
-  same way on rsenml compare's datasets (`bench/run.sh` writes
-  `doc/performance.md`); `doc/comparison.md` compares features. Sizes are equal
-  in every format.
-- **Faster encoding and validation**: the writers (JSON, CBOR, XML, EXI) and the
-  finite-number check no longer loop over tuples of fields of mixed types, which
-  boxed every field. Encoding is 5-12× faster (1.7-2.5× rsenml's time, from
-  10-25×); decoding, which validates, 2× faster.
-- **Facade**: `SenML.decode(media, input)`, `SenML.encode(media, pack)` and
-  `SenML.encode_unchecked(media, pack)` for all eight media types (not exported).
-  Every test case in every media type equals rsenml's bytes. README with one
-  example per format, `doc/design.md`, `doc/conformance.md` (rsenml's row
-  numbers), a PrecompileTools workload, and `examples/basics` (run by the gate).
-- **EXI** (`SenML.Exi`, RFC 8428 section 8) on JExi 0.2 (`[sources]`, tag
-  `v0.2.0`): `decode` (with `out_of_band` for streams without options),
-  `decode_unchecked`, `encode` and `encode_unchecked` (`alignment`, `cookie`,
-  `extensions`), `RecordReader`, `StreamEncoder`. Grammar tables generated from
-  the [RFC 8428 section 8 XSD](https://www.rfc-editor.org/rfc/rfc8428#section-8) with schemaId "a" (`scripts/gen-tables.sh`, checked by the
-  gate). Both section 8 dumps both ways; all 32 EXIficient streams byte for
-  byte; -0.0 is written as 0.
-- **XML** (`SenML.Xml`, RFC 8428 section 7): `decode`, `decode_unchecked`,
-  `encode`, `encode_unchecked`, `RecordReader`, `StreamEncoder`. Its own
-  tokenizer with xmlparser's rules (names, characters, comments, CDATA, the
-  declaration); UTF-8 only, DTDs refused; namespaces, references and
-  attribute-value normalization; the XSD types of Table 5. Output equals rsenml's
-  bytes for every test case. No XML.jl dependency.
-- **CBOR** (`SenML.Cbor`, RFC 8428 section 6): `decode`, `decode_unchecked`,
-  `decode_sensml`, `encode`, `encode_unchecked`, `encode_sensml`, `RecordReader`,
-  SenSML `StreamDecoder` and `StreamEncoder`. Integers, half/single/double floats
-  and tag 4 decimal fractions are read; numbers are written in the smallest exact
-  form. The section 6 dump both ways; every rsenml CBOR vector gets the same
-  verdict and bytes.
-- **JSON** (`SenML.Json`, RFC 8428 section 5): `decode`, `decode_unchecked`,
-  `encode`, `encode_unchecked`, `RecordReader`, SenSML `StreamDecoder` and
-  `StreamEncoder`. Its own reader with nanojson's grammar rules, so every rsenml
-  JSON vector gets the same verdict; output equals rsenml's bytes for every
-  vector and test case.
-- **Core** (RFC 8428 section 4 and 9, 12): `Record` (keyword constructor),
-  `Extension`, `Pack`; validation (`validate`, `Validator`); resolution (`resolve`,
-  `Resolver`, `ResolvedRecord`); the units registry; `rec=` fragments
-  (`RecordSelector`); media types and CoAP Content-Formats; strict unpadded
-  base64url; shortest number text equal to rsenml's (Rust's tie rule included);
-  one `SenMLError` type whose `kind` names rsenml's error variants.
-- Repository scaffold: package, gate, third-party pin of rsenml, and the test
-  fixtures copied from it.
+First release. SenMLFormat reads and writes SenML and SenSML
+([RFC 8428](https://www.rfc-editor.org/rfc/rfc8428)) in all four formats. It is
+the Julia twin of [rsenml](https://github.com/nhenehan/rsenml) and writes the
+same bytes as rsenml in every format.
+
+- **Core** (sections 4, 9 and 12): `Record` (keyword constructor), `Extension`
+  and `Pack`; validation (`validate`, `Validator`); resolution (`resolve`,
+  `Resolver`, `ResolvedRecord`); the units registry of Table 6; `rec=` fragment
+  identifiers (`RecordSelector`); the media types and their CoAP Content-Format
+  numbers; strict unpadded base64url; the shortest text for every number, equal
+  to rsenml's. Every error is one `SenMLError`, whose `kind` names rsenml's
+  matching error.
+- **Facade**: `SenMLFormat.decode(media, input)`, `SenMLFormat.encode(media, pack)`
+  and `SenMLFormat.encode_unchecked(media, pack)` for all eight media types (not
+  exported, as the names are common).
+- **JSON** (`SenMLFormat.Json`, section 5): `decode`, `decode_unchecked`,
+  `encode`, `encode_unchecked`, `RecordReader`, and a SenSML `StreamDecoder` and
+  `StreamEncoder`. Every rsenml JSON test vector gets the same verdict.
+- **CBOR** (`SenMLFormat.Cbor`, section 6): the same functions plus
+  `decode_sensml` and `encode_sensml`. Integers, half, single and double floats
+  and tag 4 decimal fractions are read; numbers are written in their smallest
+  exact form. The RFC's section 6 example comes out byte for byte, both ways.
+- **XML** (`SenMLFormat.Xml`, section 7): `decode`, `decode_unchecked`, `encode`,
+  `encode_unchecked`, `RecordReader`, `StreamEncoder`. UTF-8 only; DTDs are
+  refused.
+- **EXI** (`SenMLFormat.Exi`, section 8), on
+  [EXIFormat](https://github.com/nhenehan/EXIFormat.jl): `decode` (with
+  `out_of_band` for streams without options), `decode_unchecked`, `encode` and
+  `encode_unchecked` (`alignment`, `cookie`, `extensions`), `RecordReader`,
+  `StreamEncoder`. Both section 8 examples come out byte for byte, both ways, and
+  all 32 EXIficient 1.0.7 test streams match. EXI cannot carry -0.0, which is
+  written as 0.
+- **Checked against rsenml**: the same bytes and verdicts on rsenml's 64 test
+  vectors and 16 test cases in every media type; truncated and randomly changed
+  input only ever gives a `SenMLError`.
+- `examples/basics`, `doc/design.md` (the reading of unclear points),
+  `doc/conformance.md` (a requirement-by-requirement checklist),
+  `doc/comparison.md` and `doc/performance.md` (next to rsenml).

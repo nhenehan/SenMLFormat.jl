@@ -6,7 +6,8 @@ with a name, a value, and maybe a unit and a time. SenMLFormat reads and writes
 SenML in Julia. It also handles SenSML, the streaming form of SenML.
 
 SenMLFormat is the Julia twin of [rsenml](https://github.com/nhenehan/rsenml), the
-way [EXIFormat](https://github.com/nhenehan/jexi) is the twin of rexi. It follows the
+Rust library, the way [EXIFormat](https://github.com/nhenehan/EXIFormat.jl) is the
+twin of [rexi](https://github.com/nhenehan/rexi). It follows the
 same reading of RFC 8428 and writes the same bytes as rsenml in every format.
 
 **Supported:** all four SenML representations, JSON, CBOR, XML and EXI, over one
@@ -91,14 +92,12 @@ SenMLFormat.Exi.decode(exi) == pack
 
 ## Add to your project
 
-SenMLFormat is not in the General registry, and neither is EXIFormat, which it uses for
-EXI. Add both from GitHub (Julia 1.11 or newer):
-
 ```julia
 using Pkg
-Pkg.add(url = "https://github.com/nhenehan/jexi", rev = "v0.2.0")
-Pkg.add(url = "https://github.com/nhenehan/senml.jl")
+Pkg.add("SenMLFormat")
 ```
+
+It brings in [EXIFormat](https://github.com/nhenehan/EXIFormat.jl) for EXI.
 
 ## What it does
 
@@ -110,8 +109,9 @@ Pkg.add(url = "https://github.com/nhenehan/senml.jl")
   can also read SenSML streams as the bytes arrive (`StreamDecoder`).
 - Checks packs against the RFC's rules (`validate`), and resolves them into full
   names and absolute times (`resolve`).
-- Includes the RFC 8428 units registry (`lookup_unit`) and `rec=` fragment
-  identifiers (`RecordSelector`).
+- Includes the RFC 8428 units registry, Table 6 (`lookup_unit`; the units
+  added later by RFC 8798 are not included), and `rec=` fragment identifiers
+  (`RecordSelector`).
 - Matches the RFC byte for byte. Its CBOR example and both EXI examples
   (bit-packed and byte-aligned) come out exactly the same, in both directions.
 - Writes the same bytes as rsenml in every format, and the same EXI bytes as
@@ -149,6 +149,16 @@ bench/run.sh                   # speed next to rsenml (needs cargo), writes doc/
 | `scripts/gen-tables.sh [--check]` | EXI grammar tables of the [RFC 8428 section 8 XSD](https://www.rfc-editor.org/rfc/rfc8428#section-8) (EXIFormat's schema compiler, schemaId "a") |
 | `scripts/gate.sh [--quick]` | tests with Aqua and JET on Julia 1.11 and 1.12, the checks above, the example |
 | `bench/run.sh` | SenMLFormat and rsenml timed the same way on the same data |
+
+## How this was made
+
+SenMLFormat was written with the help of an AI coding tool (Claude Code),
+working to my design and under my review. Every change has to pass the same
+tests: the bytes must match rsenml in all four formats, EXI must match
+EXIficient, and the test suite runs on Julia 1.10 and 1.12. I understand and
+maintain the code, and I answer for it.
+
+Notes for AI coding agents are in [AGENTS.md](AGENTS.md).
 
 ## License
 

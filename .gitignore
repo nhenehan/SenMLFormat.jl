@@ -3,3 +3,4 @@ Manifest-v*.toml
 /test/work/
 /bench/rsenml/target/
 /.devenv/
+/CR.md

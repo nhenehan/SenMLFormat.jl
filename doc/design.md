@@ -1,6 +1,6 @@
 # SenMLFormat design
 
-SenMLFormat is a port of rsenml 0.9.1. Its rules, its reading of the unclear points
+SenMLFormat is a port of rsenml 0.9 (its fixtures come from rsenml 0.9.2). Its rules, its reading of the unclear points
 of RFC 8428 and its output bytes are rsenml's; see
 [rsenml's design.md](https://github.com/nhenehan/rsenml/blob/main/doc/design.md)
 for the reasons behind them. This file lists those choices in short, then what is
@@ -65,26 +65,26 @@ the same double; CBOR numbers take the smallest exact form.
   after rsenml's `Error` variant (`:Syntax`, `:MissingValue`, ...), so a test can
   check that both libraries give the same verdict. The decoders throw nothing else,
   on any input.
-- **Our own JSON, CBOR and XML readers.** rsenml uses nanojson, minicbor and
+- **JSON, CBOR and XML readers written here.** rsenml uses nanojson, minicbor and
   xmlparser. SenMLFormat does not use JSON.jl, CBOR.jl or XML.jl: each reader is
   written here with the grammar rules of the Rust crate it stands for, quirks
   included (for example a value cut off inside a CBOR map is `:Syntax`, as in
   minicbor, not `:Incomplete`), so the 64 shared vectors get the same verdict.
-  XML.jl was tried first and dropped: it gives no error offsets and accepts input
-  xmlparser refuses.
+  XML.jl is not used: it gives no error offsets and accepts input xmlparser
+  refuses.
 - **Shortest numbers.** Julia's `repr(Float64)` is Ryu, like Rust's, but Rust
   rounds exact halfway cases up and Julia does not; `shortest()` applies Rust's
   rule. Checked equal to Rust on 300 000 doubles.
-- **EXI through EXIFormat.** EXIFormat 0.2 is a hard dependency, through `[sources]` at tag
-  `v0.2.0` (EXIFormat is not in the General registry, and `[sources]` needs Julia 1.11,
-  hence the 1.11 floor). The grammar tables are made by EXIFormat's schema compiler from
+- **EXI through EXIFormat.** EXIFormat 0.2 is a hard dependency, from the
+  General registry. The grammar tables are made by EXIFormat's schema compiler from
   the [RFC 8428 section 8 XSD](https://www.rfc-editor.org/rfc/rfc8428#section-8) with schemaId "a" (`scripts/gen-tables.sh`) and committed. The
   RFC is not committed: `scripts/fetch-standards.sh` downloads it and takes the
   schema out of it.
   EXIFormat errors become `SenMLError`s.
 - **Not ported:** `encode_into` (rsenml's fixed-buffer writers, for `no_std`).
-  In Julia, `encode` returns a new `Vector{UInt8}`, and the per-record writers
-  (`encode_record`, `StreamEncoder`) write to any `IO`. The `no_std` and footprint
+  In Julia, `encode` returns a new `Vector{UInt8}`. The JSON, CBOR and XML
+  per-record writers (`encode_record`, `StreamEncoder`) write to any `IO`; EXI's
+  `StreamEncoder` returns the bytes from `finish!`. The `no_std` and footprint
   work does not apply.
 - **Facade names.** `SenMLFormat.decode`, `SenMLFormat.encode` and `SenMLFormat.encode_unchecked`
   are not exported (common names). They take bytes or a string.
