@@ -66,7 +66,7 @@ One SenML record as written, base fields included. Every field is optional
 `extensions` is a vector of [`Extension`](@ref)s or `label => value` pairs.
 
 ```julia
-Record(bn = "urn:dev:ow:10e2073a01080063:", n = "voltage", u = "V", v = 120.1)
+Record(bn = "urn:dev:mac:0024befffe804ff1:", n = "supply-air", u = "Cel", v = 12.8)
 ```
 
 Fields: `bn`, `bt`, `bu`, `bv`, `bs`, `bver`, `n`, `u`, `value`, `s`, `t`, `ut`,

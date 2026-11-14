@@ -5,9 +5,9 @@
 using PrecompileTools: @setup_workload, @compile_workload
 
 @setup_workload begin
-    json = """[{"bn":"urn:dev:ow:10e2073a01080063:","bt":1.276020076e9,"bu":"A","bver":10,"n":"voltage","u":"V","v":120.1},
-        {"n":"current","t":-5,"v":1.2},{"n":"open","vb":false},{"n":"label","vs":"Room 2"},
-        {"n":"nfc","vd":"aGkgCg"},{"n":"energy","s":42,"x":"ext"}]"""
+    json = """[{"bn":"urn:dev:mac:0024befffe804ff1:","bt":1.7e9,"bu":"Cel","bver":10,"n":"supply-air","u":"Cel","v":12.8},
+        {"n":"room","t":-5,"v":22.6},{"n":"compressor","vb":true},{"n":"mode","vs":"cool"},
+        {"n":"tag","vd":"aGkgCg"},{"n":"runtime","u":"s","s":42,"x":"ext"}]"""
     @compile_workload begin
         pack = Json.decode(json)
         for m in instances(MediaType)

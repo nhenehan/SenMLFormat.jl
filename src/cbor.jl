@@ -6,6 +6,8 @@ The CBOR format of SenML
 types `application/senml+cbor` and, for streams, `application/sensml+cbor`. CBOR
 itself is [RFC 8949](https://www.rfc-editor.org/rfc/rfc8949).
 
+The example of [RFC 8428 section 5.1.1](https://www.rfc-editor.org/rfc/rfc8428#section-5.1.1):
+
 ```julia
 pack = Pack([Record(n = "urn:dev:ow:10e2073a01080063", u = "Cel", v = 23.1)])
 bytes = SenMLFormat.Cbor.encode(pack)

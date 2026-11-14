@@ -5,6 +5,8 @@ The JSON format of SenML
 ([RFC 8428 section 5](https://www.rfc-editor.org/rfc/rfc8428#section-5)): media
 types `application/senml+json` and, for streams, `application/sensml+json`.
 
+The first example of [RFC 8428 section 5.1.2](https://www.rfc-editor.org/rfc/rfc8428#section-5.1.2):
+
 ```julia
 pack = SenMLFormat.Json.decode(\"\"\"[{"bn":"urn:dev:ow:10e2073a01080063:","n":"voltage","u":"V","v":120.1},
                                {"n":"current","u":"A","v":1.2}]\"\"\")

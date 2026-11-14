@@ -6,10 +6,17 @@
 
 using SenMLFormat
 
-# A pack of two records. The first sets a base name for both.
+# The cooling unit of a small smart office sends one pack per minute. The first
+# record sets a base name (the unit) and a base time (Unix seconds) for all of
+# them; every unit is from the RFC 8428 units registry.
 pack = Pack([
-    Record(bn = "urn:dev:ow:10e2073a01080063:", n = "temp", u = "Cel", v = 23.1),
-    Record(n = "open", vb = false),
+    Record(bn = "urn:dev:mac:0024befffe804ff1:", bt = 1.7e9, n = "supply-air", u = "Cel", v = 12.8),
+    Record(n = "return-air", u = "Cel", v = 24.1),
+    Record(n = "room", u = "Cel", v = 22.6),
+    Record(n = "humidity", u = "%RH", v = 48.0),
+    Record(n = "setpoint", u = "Cel", v = 22.0),
+    Record(n = "fan", u = "/", v = 0.65),
+    Record(n = "compressor", vb = true),
 ])
 
 # Write it in each format, then read it back.
@@ -37,7 +44,7 @@ SenMLFormat.Cbor.finish(decoder)
 
 # Errors name what went wrong, the way rsenml's do.
 try
-    SenMLFormat.decode(SENML_JSON, """[{"n":"temp","v":1,"v":2}]""")
+    SenMLFormat.decode(SENML_JSON, """[{"n":"room","v":22.6,"v":22.7}]""")
 catch e
     e isa SenMLError || rethrow()
     println("refused: ", e.kind)

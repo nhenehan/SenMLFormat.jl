@@ -18,10 +18,17 @@ RFC 8428 section 8 describes, built on EXIFormat.
 ```julia
 using SenMLFormat
 
-# A pack of two records. The first sets a base name for both.
+# The cooling unit of a small smart office sends one pack per minute. The first
+# record sets a base name (the unit) and a base time (Unix seconds) for all of
+# them; every unit is from the RFC 8428 units registry.
 pack = Pack([
-    Record(bn = "urn:dev:ow:10e2073a01080063:", n = "temp", u = "Cel", v = 23.1),
-    Record(n = "open", vb = false),
+    Record(bn = "urn:dev:mac:0024befffe804ff1:", bt = 1.7e9, n = "supply-air", u = "Cel", v = 12.8),
+    Record(n = "return-air", u = "Cel", v = 24.1),
+    Record(n = "room", u = "Cel", v = 22.6),
+    Record(n = "humidity", u = "%RH", v = 48.0),
+    Record(n = "setpoint", u = "Cel", v = 22.0),
+    Record(n = "fan", u = "/", v = 0.65),
+    Record(n = "compressor", vb = true),
 ])
 
 # Write it in each format, then read it back.
@@ -40,12 +47,17 @@ end
 It prints:
 
 ```text
-application/senml+json: 93 bytes
-application/senml+cbor: 63 bytes
-application/senml+xml: 150 bytes
-application/senml-exi: 55 bytes
-urn:dev:ow:10e2073a01080063:temp = 23.1
-urn:dev:ow:10e2073a01080063:open = false
+application/senml+json: 288 bytes
+application/senml+cbor: 188 bytes
+application/senml+xml: 355 bytes
+application/senml-exi: 139 bytes
+urn:dev:mac:0024befffe804ff1:supply-air = 12.8
+urn:dev:mac:0024befffe804ff1:return-air = 24.1
+urn:dev:mac:0024befffe804ff1:room = 22.6
+urn:dev:mac:0024befffe804ff1:humidity = 48.0
+urn:dev:mac:0024befffe804ff1:setpoint = 22.0
+urn:dev:mac:0024befffe804ff1:fan = 0.65
+urn:dev:mac:0024befffe804ff1:compressor = true
 ```
 
 `SenMLFormat.decode` and `SenMLFormat.encode` are not exported, as the names are common.
@@ -55,7 +67,9 @@ urn:dev:ow:10e2073a01080063:open = false
 ```julia
 using SenMLFormat
 
-# JSON (section 5)
+# JSON (section 5). This is the first example of RFC 8428 section 5.1.2
+# (https://www.rfc-editor.org/rfc/rfc8428#section-5.1.2), which the RFC's EXI
+# dump in section 8 also encodes.
 pack = SenMLFormat.Json.decode("""[{"bn":"urn:dev:ow:10e2073a01080063:","n":"voltage","u":"V","v":120.1},
                              {"n":"current","u":"A","v":1.2}]""")
 SenMLFormat.Json.encode(pack)        # the same JSON without whitespace
