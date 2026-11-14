@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.1.0
 
 First release. SenMLFormat reads and writes SenML and SenSML
 ([RFC 8428](https://www.rfc-editor.org/rfc/rfc8428)) in all four formats. It is
