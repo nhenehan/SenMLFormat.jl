@@ -1,11 +1,11 @@
-# SenMLFormat design
+# Where the RFC is unclear
 
 SenMLFormat is a port of rsenml 0.9 (its fixtures come from rsenml 0.9.2). Its rules, its reading of the unclear points
 of RFC 8428 and its output bytes are rsenml's; see
 [Where the RFC is unclear](https://nhenehan.github.io/rsenml/rfc-choices.html)
 in rsenml's guide, and its
 [CONTRIBUTING.md](https://github.com/nhenehan/rsenml/blob/main/CONTRIBUTING.md),
-for the reasons behind them. This file lists those choices in short, then what is
+for the reasons behind them. This page lists those choices in short, then what is
 different because this is Julia.
 
 ## Layout

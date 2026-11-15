@@ -15,7 +15,7 @@ rsenml's own output (`test/fixtures/export`, written by rsenml's
   case and every accepted vector, and the same sizes on the benchmark data;
 - the same EXI bytes as EXIficient 1.0.7 on all 32 streams;
 - the same 25 conformance rows, with the same numbers ([conformance.md](conformance.md));
-- the same 10 readings of unclear points of RFC 8428 ([design.md](design.md)).
+- the same 10 readings of unclear points of RFC 8428 ([Where the RFC is unclear](rfc-choices.md)).
 
 ## Features
 

@@ -17,7 +17,7 @@ Use the parts it already has rather than adding another parser or data model.
 | EXI (section 8) | `src/exi.jl`, `SenMLFormat.Exi`, and `src/generated/senml_tables.jl` | `rsenml-exi` |
 | One call for any media type | `src/facade.jl`: `SenMLFormat.decode`, `encode`, `encode_unchecked` (not exported) | `rsenml` |
 
-Do not add JSON.jl, CBOR.jl or XML.jl. Each reader here copies the grammar rules of the Rust crate rsenml uses (nanojson, minicbor, xmlparser), quirks included, so both libraries give the same verdict on the same bytes. `doc/design.md` explains each choice.
+Do not add JSON.jl, CBOR.jl or XML.jl. Each reader here copies the grammar rules of the Rust crate rsenml uses (nanojson, minicbor, xmlparser), quirks included, so both libraries give the same verdict on the same bytes. The docs page `docs/src/appendix/rfc-choices.md` explains each choice.
 
 ## Choosing an interface
 
@@ -58,11 +58,11 @@ The bytes must equal rsenml's in all eight media types and both EXI alignments, 
 
 ## Development conventions
 
-Do not invent functions, keyword arguments or error kinds; check the source first. Follow rsenml's reading of the unclear points (`doc/design.md`, "The same readings"). Write comments in plain, everyday words, and link the RFC section (`https://www.rfc-editor.org/rfc/rfc8428#section-...`) where code follows it.
+Do not invent functions, keyword arguments or error kinds; check the source first. Follow rsenml's reading of the unclear points (`docs/src/appendix/rfc-choices.md`, "The same readings"). Write comments in plain, everyday words, and link the RFC section (`https://www.rfc-editor.org/rfc/rfc8428#section-...`) where code follows it.
 
 ## Testing
 
-The steps are in the README's "Development" section. In short:
+The steps are in `CONTRIBUTING.md`. In short:
 
 1. `scripts/fetch-third-party.sh` and `scripts/fetch-standards.sh`, once.
 2. `scripts/gate.sh` before every commit: the third-party pin, the standards, `scripts/sync-fixtures.sh --check`, `scripts/gen-tables.sh --check`, then `Pkg.test` with Aqua and JET on Julia 1.10 and 1.12, then `examples/basics`. `--quick` runs only the tests on the current Julia.
@@ -72,7 +72,9 @@ Check the gate's exit status itself; do not pipe it through `grep` and read the 
 
 ## Documentation
 
-`doc/performance.md` is written only by `bench/run.sh` (it needs cargo); do not edit it by hand. Keep the README's "It prints" block the same as what `examples/basics/basics.jl` prints.
+The docs are built with Documenter.jl from `docs/` (`julia --project=docs docs/make.jl`). Update the manual (`docs/src/manual`) when a public function or user-facing behaviour changes, and list every exported name in the API reference (`docs/src/api`); the build fails otherwise. Manual pages take their code from `examples/basics` with `#! include` lines (see `docs/make.jl`), and Documenter runs it: never paste code or output into them. The manual follows rsenml's guide chapter for chapter, with the same data; keep them in step.
+
+`docs/src/appendix/performance.md` is written only by `bench/run.sh` (it needs cargo); do not edit it by hand. Keep the README's "It prints" block the same as what `examples/basics/basics.jl` prints. Development steps go in `CONTRIBUTING.md`, not the README.
 
 ## Repository rules
 

@@ -1,18 +1,36 @@
-# SenMLFormat
+# SenMLFormat.jl
 
-SenML (Sensor Measurement Lists, [RFC 8428](https://www.rfc-editor.org/rfc/rfc8428))
-is a small, standard way for sensors to send readings: a list of records, each
-with a name, a value, and maybe a unit and a time. SenMLFormat reads and writes
-SenML in Julia. It also handles SenSML, the streaming form of SenML.
+*SenML (RFC 8428) sensor readings for Julia: JSON, CBOR, XML and EXI from one data model.*
 
-SenMLFormat is the Julia twin of [rsenml](https://github.com/nhenehan/rsenml), the
-Rust library, the way [EXIFormat](https://github.com/nhenehan/EXIFormat.jl) is the
-twin of [rexi](https://github.com/nhenehan/rexi). It follows the
-same reading of RFC 8428 and writes the same bytes as rsenml in every format.
+[![docs-stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://nhenehan.github.io/SenMLFormat.jl/stable)
+[![docs-dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://nhenehan.github.io/SenMLFormat.jl/dev)
+[![CI](https://github.com/nhenehan/SenMLFormat.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/nhenehan/SenMLFormat.jl/actions/workflows/CI.yml)
 
-**Supported:** all four SenML representations, JSON, CBOR, XML and EXI, over one
-data model. EXI is SenML's XML form coded as EXI (Efficient XML Interchange), as
-RFC 8428 section 8 describes, built on EXIFormat.
+SenMLFormat reads and writes sensor readings in Julia. The format is SenML (Sensor
+Measurement Lists, [RFC 8428](https://www.rfc-editor.org/rfc/rfc8428)), a small
+IETF standard: a list of records, each with a name, a value, and maybe a unit and
+a time. A thermostat, a water meter and a web app can all agree on it without
+sharing any code.
+
+SenMLFormat is the Julia version of [rsenml](https://github.com/nhenehan/rsenml),
+the way [EXIFormat](https://github.com/nhenehan/EXIFormat.jl) is the Julia version
+of [rexi](https://github.com/nhenehan/rexi). It makes the same choices where the
+RFC leaves room, and writes the same bytes in every format.
+
+**Supported:** all four SenML formats (JSON, CBOR, XML and EXI) over one data
+model, and SenSML, the streaming form.
+
+## Installation
+
+The package can be installed with Julia's package manager. In the Pkg REPL (press
+`]` to enter it):
+
+```
+pkg> add SenMLFormat
+```
+
+or with Pkg functions: `using Pkg; Pkg.add("SenMLFormat")`. SenMLFormat needs
+Julia 1.10 or newer, and brings in EXIFormat for EXI.
 
 ## Quick example
 
@@ -63,92 +81,92 @@ urn:dev:mac:0024befffe804ff1:compressor = true
 
 `SenMLFormat.decode` and `SenMLFormat.encode` are not exported, as the names are common.
 
-## One example per format
+## Learn more
 
-```julia
-using SenMLFormat
+- **[The documentation](https://nhenehan.github.io/SenMLFormat.jl/stable)** has a manual that works through one small
+  example per idea, from a first pack to streaming, an API reference, and the
+  choices made where the RFC is unclear.
+- **[`examples/basics`](examples/basics)** contains the manual's scripts. Each
+  has a Rust twin in rsenml's `examples/basics` with the same data.
 
-# JSON (section 5). This is the first example of RFC 8428 section 5.1.2
-# (https://www.rfc-editor.org/rfc/rfc8428#section-5.1.2), which the RFC's EXI
-# dump in section 8 also encodes.
-pack = SenMLFormat.Json.decode("""[{"bn":"urn:dev:ow:10e2073a01080063:","n":"voltage","u":"V","v":120.1},
-                             {"n":"current","u":"A","v":1.2}]""")
-SenMLFormat.Json.encode(pack)        # the same JSON without whitespace
+## SenML implementation
 
-# CBOR (section 6): integer keys, numbers in their smallest exact form
-cbor = SenMLFormat.Cbor.encode(pack)
-SenMLFormat.Cbor.decode(cbor) == pack
-SenMLFormat.Cbor.encode_sensml(pack)  # SenSML: an indefinite-length array
+| Feature | Status | Notes |
+|---|---|---|
+| JSON (`application/senml+json`) | Supported | |
+| CBOR (`application/senml+cbor`) | Supported | Integer keys of Table 4; SenSML as an indefinite-length array |
+| XML (`application/senml+xml`) | Supported | UTF-8 only; a DTD is refused |
+| EXI (`application/senml-exi`) | Supported | Strict, with the section 8 schema, built on EXIFormat |
+| EXI bit-packed and byte-aligned | Supported | Written with the options in the header (schemaId `"a"`); streams without them are read when you give the options |
+| SenSML streams | Supported | All four media types |
+| Reading a stream as bytes arrive | JSON and CBOR | XML and EXI read record by record from whole input |
+| Validation | Supported | The rules of section 4; registered units on request |
+| Resolving | Supported | Full names, absolute times, base values and sums (section 4.6) |
+| Units registry | Supported | Table 6 of RFC 8428 |
+| `rec=` fragment identifiers | Supported | Section 9.1 |
+| CoAP Content-Formats | Supported | All eight media types |
+| Extensions in EXI | Not supported | Strict EXI can't carry them: dropped by default, or refused |
+| Non-strict EXI | Not supported | |
+| XPointer fragment identifiers | Not supported | Section 9.2 |
 
-# XML (section 7)
-xml = SenMLFormat.Xml.encode(pack)   # <sensml xmlns="urn:ietf:params:xml:ns:senml"><senml .../>...
-SenMLFormat.Xml.decode(xml) == pack
+One known limit: EXI cannot carry -0.0, so it is written as 0. The other choices,
+and what is different in Julia, are in the docs'
+[Where the RFC is unclear](https://nhenehan.github.io/SenMLFormat.jl/stable/appendix/rfc-choices/).
 
-# EXI (section 8): strict, schemaId "a", no cookie
-exi = SenMLFormat.Exi.encode(pack)                               # bit-packed: the 63 bytes of section 8
-SenMLFormat.Exi.encode(pack; alignment = :byte_aligned)          # byte-aligned
-SenMLFormat.Exi.decode(exi) == pack
-```
+## Standards
 
-## Add to your project
+| Standard | What it is | Implemented |
+|---|---|---|
+| [RFC 8428](https://www.rfc-editor.org/rfc/rfc8428) | SenML itself: the data model and the JSON, CBOR, XML and EXI formats | Yes |
+| [RFC 9100](https://www.rfc-editor.org/rfc/rfc9100) | Updates RFC 8428: `bver` becomes a bitmap of features | No |
+| [RFC 8798](https://www.rfc-editor.org/rfc/rfc8798) | More units for the SenML Units registry, and secondary units | No |
+| [RFC 9193](https://www.rfc-editor.org/rfc/rfc9193) | Fields that give the Content-Format of a data value (`ct`, `ce`) | No |
+| [RFC 8790](https://www.rfc-editor.org/rfc/rfc8790) | FETCH and PATCH of SenML records over CoAP | No |
 
-```julia
-using Pkg
-Pkg.add("SenMLFormat")
-```
+[references.md](references.md) lists these and the other standards SenMLFormat
+uses.
 
-It brings in [EXIFormat](https://github.com/nhenehan/EXIFormat.jl) for EXI.
+## Conformance and interoperability
 
-## What it does
+Test results from the full test gate (`scripts/gate.sh`, on Julia 1.10 and 1.12).
 
-- Reads and writes all eight SenML media types: `application/senml+json`,
-  `senml+cbor`, `senml+xml`, `senml-exi`, and their SenSML twins. It also knows
-  their CoAP Content-Format numbers (`media_type`, `coap_content_format`).
-- Reads whole packs (`decode`) or one record at a time (`RecordReader`). Writes
-  whole packs (`encode`) or one record at a time (`StreamEncoder`). JSON and CBOR
-  can also read SenSML streams as the bytes arrive (`StreamDecoder`).
-- Checks packs against the RFC's rules (`validate`), and resolves them into full
-  names and absolute times (`resolve`).
-- Includes the RFC 8428 units registry, Table 6 (`lookup_unit`; the units
-  added later by RFC 8798 are not included), and `rec=` fragment identifiers
-  (`RecordSelector`).
-- Matches the RFC byte for byte. Its CBOR example and both EXI examples
-  (bit-packed and byte-aligned) come out exactly the same, in both directions.
-- Writes the same bytes as rsenml in every format, and the same EXI bytes as
-  EXIficient 1.0.7, on every test case.
-- Throws only `SenMLError` on cut-off or changed input. Its `kind` is the name
-  of rsenml's matching error.
-
-Where the RFC is unclear, SenMLFormat makes rsenml's choices; they and the
-Julia-specific points are in [doc/design.md](doc/design.md). One known limit: EXI
-cannot carry -0.0. The requirement-by-requirement checklist is
-[doc/conformance.md](doc/conformance.md). How it compares with rsenml, features and
-speed, is in [doc/comparison.md](doc/comparison.md) and
-[doc/performance.md](doc/performance.md).
-
-## Examples
-
-- [`examples/basics`](examples/basics/basics.jl): the example above, plus a SenSML
-  stream read in chunks and an error.
-
-## Development
-
-```sh
-scripts/fetch-third-party.sh   # the pinned rsenml, in a cache outside this tree
-scripts/fetch-standards.sh     # download RFC 8428 (the tests read its examples)
-scripts/sync-fixtures.sh       # copy rsenml's test data into test/fixtures
-scripts/gate.sh                # everything a commit must pass (--quick: one Julia)
-bench/run.sh                   # speed next to rsenml (needs cargo), writes doc/performance.md
-```
-
-| Script | Purpose |
+| Test | Result |
 |---|---|
-| `scripts/fetch-third-party.sh [--check \| --update NAME]` | the pinned rsenml in `~/.cache/senmlformat/third_party` |
-| `scripts/fetch-standards.sh [--check]` | [RFC 8428](https://www.rfc-editor.org/rfc/rfc8428) from rfc-editor.org, and its section 8 XSD taken out of it, checked by sha256 (`standards.lock`), in `~/.cache/senmlformat/standards` |
-| `scripts/sync-fixtures.sh [--check]` | rsenml's exported vectors and cases, the EXIficient streams |
-| `scripts/gen-tables.sh [--check]` | EXI grammar tables of the [RFC 8428 section 8 XSD](https://www.rfc-editor.org/rfc/rfc8428#section-8) (EXIFormat's schema compiler, schemaId "a") |
-| `scripts/gate.sh [--quick]` | tests with Aqua and JET on Julia 1.10 and 1.12, the checks above, the example |
-| `bench/run.sh` | SenMLFormat and rsenml timed the same way on the same data |
+| RFC 8428's JSON examples (sections 5.1.1 to 5.1.7) | All read and validate; 5.1.4 is 5.1.3 resolved |
+| RFC 8428's CBOR dump (section 6) | Same bytes, both ways |
+| RFC 8428's EXI dumps (section 8, bit-packed and byte-aligned) | Same bytes, both ways; Table 3's 161 bytes for 5.1.3 |
+| rsenml's 66 conformance vectors | The same verdict on every one |
+| rsenml's bytes, every vector and test case, all formats and both EXI alignments | The same bytes |
+| EXI compared with EXIficient 1.0.7, 16 packs, both alignments | All 32 streams have the same bytes |
+| Decoders on cut-off and randomly changed input | Only `SenMLError`, never another exception |
+
+The test data comes from rsenml at a pinned tag (`fixtures/export`). The docs'
+[comparison](https://nhenehan.github.io/SenMLFormat.jl/stable/appendix/comparison/) and
+[performance](https://nhenehan.github.io/SenMLFormat.jl/stable/appendix/performance/) pages set the two side by side.
+
+## Safe with untrusted data
+
+A few hostile bytes can ask a decoder for a lot of work, such as an array of 2^64
+records or endless nesting. SenMLFormat's decoders throw a `SenMLError` instead:
+deep nesting stops at a fixed depth, huge announced lengths fail cleanly, and XML
+DTDs (and so entity expansion) are refused. `decode` also validates the pack, so
+what you get back follows RFC 8428's rules.
+
+See the manual's [Untrusted input](https://nhenehan.github.io/SenMLFormat.jl/stable/manual/untrusted-input/) chapter.
+
+## Thanks
+
+- **Cullen Jennings, Zach Shelby, Jari Arkko, Ari Keränen and Carsten Bormann**
+  wrote RFC 8428. Its examples, hex dumps and schema are the first tests
+  SenMLFormat must pass.
+- **Daniel Peintner** wrote [EXIficient](https://exificient.github.io/) with
+  Richard Kuntschke at Siemens. SenMLFormat's EXI bytes are checked against
+  EXIficient's.
+- **Toralf Wittner** (minicbor), **Yevhenii Reizner** (xmlparser) and **Gronis**
+  (nanojson) wrote the Rust parsers whose grammar rules SenMLFormat's readers
+  follow.
+
+Thank you.
 
 ## How this was made
 
@@ -158,9 +176,11 @@ tests: the bytes must match rsenml in all four formats, EXI must match
 EXIficient, and the test suite runs on Julia 1.10 and 1.12. I understand and
 maintain the code, and I answer for it.
 
-Notes for AI coding agents are in [AGENTS.md](AGENTS.md).
-
 ## License
 
-BSD 3-Clause, the same as rsenml. See [LICENSE](LICENSE). Standards are linked,
-not committed; the downloaded RFC keeps its own license.
+BSD-3-Clause, the same as rsenml. See [LICENSE](LICENSE). The downloaded RFC keeps
+its own license.
+
+For the code layout, tests, test data and docs build, see
+[CONTRIBUTING.md](CONTRIBUTING.md). Notes for AI coding agents are in
+[AGENTS.md](AGENTS.md).

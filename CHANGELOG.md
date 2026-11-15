@@ -37,6 +37,9 @@ same bytes as rsenml in every format.
 - **Checked against rsenml**: the same bytes and verdicts on rsenml's 66 test
   vectors and 16 test cases in every media type; truncated and randomly changed
   input only ever gives a `SenMLError`.
-- `examples/basics`, `doc/design.md` (the reading of unclear points),
-  `doc/conformance.md` (a requirement-by-requirement checklist),
-  `doc/comparison.md` and `doc/performance.md` (next to rsenml).
+- **Documentation** built with Documenter.jl and published at
+  https://nhenehan.github.io/SenMLFormat.jl: a manual that follows rsenml's
+  guide chapter for chapter and runs the scripts of `examples/basics`, an API
+  reference, and an appendix (the reading of unclear points, a
+  requirement-by-requirement checklist, and the comparison with rsenml). CI runs
+  the tests on Julia 1.10 and the latest release, and builds the docs.

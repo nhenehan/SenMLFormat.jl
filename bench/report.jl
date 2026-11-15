@@ -1,4 +1,4 @@
-# Writes doc/performance.md from the TSV output of bench/rsenml and bench/bench.jl.
+# Writes docs/src/appendix/performance.md from the TSV output of bench/rsenml and bench/bench.jl.
 # Each file may hold several rounds; the fastest median of each cell is used.
 #   julia bench/report.jl rsenml.tsv senmlformat.tsv
 using Printf
