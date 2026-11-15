@@ -59,9 +59,12 @@ step "tests on Julia $(julia +"$CURRENT" --startup-file=no -e 'print(VERSION)') 
 run_tests "$CURRENT"
 
 if [[ $QUICK -eq 0 ]]; then
-    step "example"
+    step "examples"
     env="$(scripts/dev-env.sh "$CURRENT")"
-    julia +"$CURRENT" --startup-file=no --project="$env" examples/basics/basics.jl >/dev/null
+    for script in examples/basics/basics.jl examples/basics/{first_pack,formats,resolve,validate,stream,errors}.jl; do
+        julia +"$CURRENT" --startup-file=no --project="$env" "$script" >/dev/null
+        echo "ok       $script"
+    done
 fi
 
 echo
