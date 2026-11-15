@@ -2,7 +2,7 @@
 
 Each requirement, where SenMLFormat implements it, and the test that shows it. The
 row numbers are those of
-[rsenml's conformance.md](https://github.com/nhenehan/rsenml/blob/main/doc/conformance.md).
+[rsenml's conformance checklist](https://nhenehan.github.io/rsenml/conformance.html).
 Tests are named `file` / testset. "All formats" means JSON, CBOR and XML read the
 same way through one `RecordBuilder` (EXI's strict grammar cannot express most
 violations in the first place).

@@ -3,7 +3,7 @@
 # https://www.rfc-editor.org/rfc/rfc8428#section-4
 #
 # How SenMLFormat reads the spec where it leaves room (the same as rsenml; see
-# doc/design.md there):
+# https://nhenehan.github.io/rsenml/rfc-choices.html):
 # - A record with only base fields sets values for the records after it. It needs
 #   no value or name (the first record of the example in section 5.1.7). Every
 #   other record needs a value or a sum (section 4.2).
