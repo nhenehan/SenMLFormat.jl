@@ -1,0 +1,57 @@
+# Tests on Julia 1.10 (the oldest supported) and the latest release, and builds the
+# documentation. Pushes to main deploy the docs to /dev, version tags to /stable
+# (deploydocs in docs/make.jl, with the DOCUMENTER_KEY deploy key).
+#
+# The tests that read the downloaded RFC skip here, as they do for users;
+# scripts/gate.sh runs them locally. SenMLFormat depends on EXIFormat from the
+# General registry, so CI can pass only once EXIFormat is registered.
+name: CI
+
+on:
+  push:
+    branches: [main]
+    tags: ["*"]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ startsWith(github.ref, 'refs/pull/') }}
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Julia ${{ matrix.version }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        version: ["1.10", "1"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: julia-actions/setup-julia@v2
+        with:
+          version: ${{ matrix.version }}
+      - uses: julia-actions/cache@v2
+      - uses: julia-actions/julia-buildpkg@v1
+      - uses: julia-actions/julia-runtest@v1
+
+  docs:
+    name: Documentation
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: julia-actions/setup-julia@v2
+        with:
+          version: "1"
+      - uses: julia-actions/cache@v2
+      - uses: julia-actions/julia-buildpkg@v1
+      - uses: julia-actions/julia-docdeploy@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
