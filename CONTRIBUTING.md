@@ -38,9 +38,8 @@ bench/run.sh                   # speed next to rsenml (needs cargo)
 | `bench/run.sh` | SenMLFormat and rsenml timed the same way; writes `docs/src/appendix/performance.md` |
 
 The gate runs in a scratch environment made by `scripts/dev-env.sh`. Set
-`SENML_EXIFORMAT_PATH` to a local EXIFormat checkout to test against it, for
-example before EXIFormat is in the registry. The oldest Julia is the juliaup
-channel in `SENML_JULIA_OLDEST` (default `lts`).
+`SENML_EXIFORMAT_PATH` to a local EXIFormat checkout to test a change in both.
+The oldest Julia is the juliaup channel in `SENML_JULIA_OLDEST` (default `lts`).
 
 Without the downloaded RFC, `Pkg.test("SenMLFormat")` skips the tests that read
 it, with a warning. The gate sets `SENML_REQUIRE_STANDARDS`, which makes them

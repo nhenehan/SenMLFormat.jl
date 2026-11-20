@@ -6,8 +6,7 @@
 #   scripts/dev-env.sh [CHANNEL]   CHANNEL is a juliaup channel (default: julia on PATH)
 #
 # Env: SENML_EXIFORMAT_PATH  a local EXIFormat checkout to use instead of the
-#                            registered package (before it is registered, or to
-#                            try a change in both)
+#                            registered package (to try a change in both)
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CHANNEL="${1:-}"
@@ -22,5 +21,8 @@ SENML_ROOT="$ROOT" ENV_DIR="$ENV_DIR" "${JULIA[@]}" --startup-file=no -e '
     specs = [PackageSpec(path = ENV["SENML_ROOT"])]
     exif = get(ENV, "SENML_EXIFORMAT_PATH", "")
     isempty(exif) || pushfirst!(specs, PackageSpec(path = exif))
-    Pkg.develop(specs; io = devnull)' >&2
+    Pkg.develop(specs; io = devnull)
+    # gen-tables.jl loads EXIFormat itself, so the env needs it as a direct
+    # dependency, not only through SenMLFormat.
+    isempty(exif) && Pkg.add("EXIFormat"; io = devnull)' >&2
 echo "$ENV_DIR"

@@ -77,7 +77,7 @@ the same double; CBOR numbers take the smallest exact form.
 - **Shortest numbers.** Julia's `repr(Float64)` is Ryu, like Rust's, but Rust
   rounds exact halfway cases up and Julia does not; `shortest()` applies Rust's
   rule. Checked equal to Rust on 300 000 doubles.
-- **EXI through EXIFormat.** EXIFormat 0.2 is a hard dependency, from the
+- **EXI through EXIFormat.** EXIFormat 0.1 is a hard dependency, from the
   General registry. The grammar tables are made by EXIFormat's schema compiler from
   the [RFC 8428 section 8 XSD](https://www.rfc-editor.org/rfc/rfc8428#section-8) with schemaId "a" (`scripts/gen-tables.sh`) and committed. The
   RFC is not committed: `scripts/fetch-standards.sh` downloads it and takes the
