@@ -5,6 +5,7 @@
 [![docs-stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://nhenehan.github.io/SenMLFormat.jl/stable)
 [![docs-dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://nhenehan.github.io/SenMLFormat.jl/dev)
 [![CI](https://github.com/nhenehan/SenMLFormat.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/nhenehan/SenMLFormat.jl/actions/workflows/CI.yml)
+[![codecov](https://codecov.io/gh/nhenehan/SenMLFormat.jl/graph/badge.svg)](https://codecov.io/gh/nhenehan/SenMLFormat.jl)
 
 SenMLFormat reads and writes sensor readings in Julia. The format is SenML (Sensor
 Measurement Lists, [RFC 8428](https://www.rfc-editor.org/rfc/rfc8428)), a small
