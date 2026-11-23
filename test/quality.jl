@@ -9,8 +9,8 @@ end
 const JET_OK = try
     @eval using JET
     true
-catch err
-    @warn "JET is not available on Julia $VERSION; skipping its tests" err
+catch jet_error
+    @warn "JET is not available on Julia $VERSION; skipping its tests" exception = jet_error
     false
 end
 
